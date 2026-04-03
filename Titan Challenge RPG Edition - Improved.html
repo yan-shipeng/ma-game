@@ -1,0 +1,2652 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Titan Challenge — RPG Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<style>
+/* ============================================================= */
+/* RESET & BASE                                                   */
+/* ============================================================= */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;}
+body{
+  min-height:100vh;
+  background:#0c0e1a;
+  color:#e0dcc8;
+  font-family:'Press Start 2P',monospace;
+  font-size:11px;
+  line-height:1.8;
+  overflow-x:hidden;
+}
+
+/* Scanline overlay */
+body::after{
+  content:'';
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  pointer-events:none;
+  z-index:9999;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+}
+
+/* ============================================================= */
+/* PIXEL BORDER SYSTEM                                            */
+/* ============================================================= */
+.pixel-border{
+  border:4px solid #d4a017;
+  box-shadow:
+    inset 0 0 0 2px #0c0e1a,
+    inset 0 0 0 4px #8b6914,
+    0 0 0 2px #0c0e1a,
+    0 0 0 4px #8b6914;
+}
+.pixel-border-blue{
+  border:4px solid #3b82f6;
+  box-shadow:
+    inset 0 0 0 2px #0c0e1a,
+    inset 0 0 0 4px #1e3a8a,
+    0 0 0 2px #0c0e1a,
+    0 0 0 4px #1e3a8a;
+}
+.pixel-border-green{
+  border:4px solid #4ade80;
+  box-shadow:
+    inset 0 0 0 2px #0c0e1a,
+    inset 0 0 0 4px #166534,
+    0 0 0 2px #0c0e1a,
+    0 0 0 4px #166534;
+}
+.pixel-border-red{
+  border:4px solid #f87171;
+  box-shadow:
+    inset 0 0 0 2px #0c0e1a,
+    inset 0 0 0 4px #7f1d1d,
+    0 0 0 2px #0c0e1a,
+    0 0 0 4px #7f1d1d;
+}
+
+/* ============================================================= */
+/* SCREENS                                                        */
+/* ============================================================= */
+.screen{
+  display:none;
+  width:100%;
+  max-width:860px;
+  margin:0 auto;
+  padding:20px 16px;
+  min-height:100vh;
+}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ============================================================= */
+/* ACCESS CODE SCREEN                                             */
+/* ============================================================= */
+.title-screen{
+  justify-content:center;
+  align-items:center;
+  gap:24px;
+  text-align:center;
+}
+.title-logo{
+  width:100%;
+  max-width:400px;
+  border-radius:8px;
+  image-rendering:auto;
+}
+.title-name{
+  font-size:20px;
+  color:#d4a017;
+  text-shadow:0 0 20px rgba(212,160,23,0.4);
+  animation:glow 2s ease-in-out infinite alternate;
+}
+@keyframes glow{
+  from{text-shadow:0 0 10px rgba(212,160,23,0.3);}
+  to{text-shadow:0 0 30px rgba(212,160,23,0.6),0 0 60px rgba(212,160,23,0.2);}
+}
+.title-subtitle{
+  font-size:10px;
+  color:#5ce0d8;
+  letter-spacing:2px;
+}
+.pixel-input{
+  font-family:'Press Start 2P',monospace;
+  font-size:12px;
+  padding:14px 18px;
+  background:#111827;
+  border:3px solid #d4a017;
+  color:#f0c040;
+  text-align:center;
+  width:280px;
+  outline:none;
+  text-transform:uppercase;
+}
+.pixel-input:focus{
+  box-shadow:0 0 0 2px #8b6914,0 0 15px rgba(212,160,23,0.3);
+}
+.pixel-input::placeholder{
+  color:#4a4530;
+  font-size:9px;
+}
+.err-msg{
+  color:#f87171;
+  font-size:9px;
+  min-height:16px;
+}
+.pixel-btn{
+  font-family:'Press Start 2P',monospace;
+  font-size:11px;
+  padding:14px 32px;
+  background:#1a1a2e;
+  color:#d4a017;
+  border:3px solid #d4a017;
+  cursor:pointer;
+  transition:all 0.15s;
+  position:relative;
+  text-transform:uppercase;
+}
+.pixel-btn:hover{
+  background:#d4a017;
+  color:#0c0e1a;
+  box-shadow:0 0 20px rgba(212,160,23,0.4);
+}
+.pixel-btn:active{
+  transform:scale(0.96);
+}
+.pixel-btn-cyan{
+  color:#5ce0d8;
+  border-color:#5ce0d8;
+}
+.pixel-btn-cyan:hover{
+  background:#5ce0d8;
+  color:#0c0e1a;
+  box-shadow:0 0 20px rgba(92,224,216,0.4);
+}
+.pixel-btn-green{
+  color:#4ade80;
+  border-color:#4ade80;
+}
+.pixel-btn-green:hover{
+  background:#4ade80;
+  color:#0c0e1a;
+  box-shadow:0 0 20px rgba(74,222,128,0.4);
+}
+.pixel-btn-red{
+  color:#f87171;
+  border-color:#f87171;
+}
+.pixel-btn-red:hover{
+  background:#f87171;
+  color:#0c0e1a;
+}
+.pixel-btn-small{
+  font-size:9px;
+  padding:10px 20px;
+}
+
+/* Blinking cursor */
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.blink{animation:blink 1s step-end infinite;}
+
+/* ============================================================= */
+/* CHARACTER SELECT                                               */
+/* ============================================================= */
+.char-select{
+  justify-content:center;
+  align-items:center;
+  gap:28px;
+}
+.char-select-title{
+  font-size:16px;
+  color:#d4a017;
+  text-align:center;
+  text-shadow:0 0 20px rgba(212,160,23,0.3);
+}
+.char-cards{
+  display:flex;
+  gap:24px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.char-card{
+  width:200px;
+  background:#111827;
+  padding:20px;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.2s;
+  position:relative;
+}
+.char-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 0 25px rgba(212,160,23,0.3);
+}
+.char-card.selected{
+  border-color:#5ce0d8 !important;
+  box-shadow:
+    inset 0 0 0 2px #0c0e1a,
+    inset 0 0 0 4px #2a8a84,
+    0 0 0 2px #0c0e1a,
+    0 0 0 4px #2a8a84,
+    0 0 30px rgba(92,224,216,0.3) !important;
+}
+.char-portrait{
+  width:96px;
+  height:96px;
+  image-rendering:pixelated;
+  margin:0 auto 12px;
+  display:block;
+  border:2px solid #d4a017;
+}
+.char-label{
+  font-size:10px;
+  color:#f0c040;
+  margin-top:8px;
+}
+.char-selected-check{
+  display:none;
+  position:absolute;
+  top:8px;right:8px;
+  font-size:14px;
+  color:#5ce0d8;
+}
+.char-card.selected .char-selected-check{display:block;}
+
+.name-input-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+.name-label{
+  font-size:10px;
+  color:#5ce0d8;
+}
+
+/* ============================================================= */
+/* HUD — Score Bars                                               */
+/* ============================================================= */
+.hud{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#0c0e1a;
+  padding:10px 0;
+  margin-bottom:16px;
+}
+.hud-inner{
+  background:#111827;
+  padding:12px 16px;
+  display:flex;
+  gap:16px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.hud-bar-group{
+  flex:1;
+  min-width:180px;
+}
+.hud-bar-label{
+  font-size:8px;
+  color:#94a3b8;
+  margin-bottom:4px;
+  display:flex;
+  justify-content:space-between;
+}
+.hud-bar-track{
+  height:16px;
+  background:#1e293b;
+  border:2px solid #334155;
+  position:relative;
+  overflow:hidden;
+}
+.hud-bar-fill{
+  height:100%;
+  transition:width 0.8s ease;
+  position:relative;
+}
+.hud-bar-fill.inv{background:linear-gradient(90deg,#1e40af,#3b82f6);}
+.hud-bar-fill.esg{background:linear-gradient(90deg,#166534,#4ade80);}
+.hud-bar-value{
+  font-size:9px;
+  color:#fff;
+  font-weight:bold;
+}
+.hud-progress{
+  font-size:8px;
+  color:#d4a017;
+  text-align:center;
+  width:100%;
+  margin-top:4px;
+}
+
+/* ============================================================= */
+/* DIALOGUE BOX                                                   */
+/* ============================================================= */
+.dialogue-overlay{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:200;
+  padding:12px;
+  display:none;
+}
+.dialogue-overlay.active{display:block;}
+.dialogue-box{
+  max-width:860px;
+  margin:0 auto;
+  background:#111827;
+  padding:20px 16px;
+  display:flex;
+  gap:16px;
+  min-height:160px;
+  cursor:pointer;
+  user-select:none;
+}
+.dialogue-portrait-wrap{
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+}
+.dialogue-portrait{
+  width:96px;
+  height:96px;
+  image-rendering:pixelated;
+  border:2px solid #d4a017;
+  background:#0c0e1a;
+}
+.dialogue-name{
+  font-size:8px;
+  color:#f0c040;
+  text-align:center;
+}
+.dialogue-text-area{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  position:relative;
+}
+.dialogue-text{
+  font-size:11px;
+  line-height:2;
+  color:#e0dcc8;
+  min-height:80px;
+}
+.dialogue-advance{
+  position:absolute;
+  bottom:0;right:0;
+  font-size:14px;
+  color:#d4a017;
+  animation:bounce 0.6s ease infinite;
+  display:none;
+}
+@keyframes bounce{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(4px);}
+}
+
+/* ============================================================= */
+/* CHAPTER IMAGE                                                  */
+/* ============================================================= */
+.chapter-scene{
+  width:100%;
+  max-height:260px;
+  object-fit:cover;
+  image-rendering:auto;
+  margin-bottom:16px;
+}
+
+/* ============================================================= */
+/* DECISION MENU (RPG-style options)                              */
+/* ============================================================= */
+.decision-menu{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  margin-top:8px;
+  padding-bottom:160px; /* space for dialogue box */
+}
+.decision-menu.active{display:flex;}
+.decision-menu-title{
+  font-size:11px;
+  color:#5ce0d8;
+  margin-bottom:8px;
+  text-align:center;
+}
+.opt-item{
+  background:#111827;
+  padding:14px 16px;
+  cursor:pointer;
+  transition:all 0.15s;
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  font-size:10px;
+  line-height:1.8;
+  position:relative;
+}
+.opt-item:hover{
+  background:#1a2340;
+  border-color:#f0c040 !important;
+  box-shadow:
+    inset 0 0 0 2px #0c0e1a,
+    inset 0 0 0 4px #b8860b,
+    0 0 0 2px #0c0e1a,
+    0 0 0 4px #b8860b,
+    0 0 15px rgba(240,192,64,0.15);
+}
+.opt-item:hover .opt-letter{
+  background:#d4a017;
+  color:#0c0e1a;
+}
+.opt-letter{
+  flex-shrink:0;
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px solid #d4a017;
+  color:#d4a017;
+  font-size:11px;
+  font-weight:bold;
+  transition:all 0.15s;
+}
+.opt-text{
+  flex:1;
+  color:#c8c4b0;
+}
+
+/* ============================================================= */
+/* CONFIRM MODAL (RPG window)                                     */
+/* ============================================================= */
+.modal-overlay{
+  display:none;
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.85);
+  z-index:300;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:#0f1629;
+  max-width:600px;
+  width:100%;
+  padding:24px;
+  max-height:85vh;
+  overflow-y:auto;
+}
+.modal-title{
+  font-size:13px;
+  color:#d4a017;
+  margin-bottom:16px;
+  text-align:center;
+}
+.modal-choice{
+  font-size:10px;
+  color:#e0dcc8;
+  line-height:1.8;
+  margin-bottom:16px;
+  padding:12px;
+  background:#111827;
+  border-left:3px solid #d4a017;
+}
+.modal-reason-wrap{
+  margin-bottom:16px;
+}
+.modal-reason-label{
+  font-size:9px;
+  color:#5ce0d8;
+  margin-bottom:8px;
+}
+.modal-reason-input{
+  font-family:'Press Start 2P',monospace;
+  font-size:9px;
+  width:100%;
+  min-height:60px;
+  padding:10px;
+  background:#111827;
+  border:2px solid #334155;
+  color:#e0dcc8;
+  resize:vertical;
+  outline:none;
+  line-height:1.8;
+}
+.modal-reason-input:focus{border-color:#5ce0d8;}
+.modal-consequence{
+  display:none;
+}
+.modal-cons-text{
+  font-size:10px;
+  color:#e0dcc8;
+  line-height:1.8;
+  margin-bottom:16px;
+  padding:12px;
+  background:#111827;
+  border-left:3px solid #5ce0d8;
+}
+.modal-deltas{
+  display:flex;
+  gap:12px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+.delta-pill{
+  font-size:10px;
+  padding:8px 14px;
+  font-weight:bold;
+}
+.dp-pos{color:#4ade80;border:2px solid #4ade80;background:rgba(74,222,128,0.1);}
+.dp-neg{color:#f87171;border:2px solid #f87171;background:rgba(248,113,113,0.1);}
+.dp-zero{color:#94a3b8;border:2px solid #94a3b8;background:rgba(148,163,184,0.1);}
+.modal-btns{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+/* ============================================================= */
+/* OUTCOME SCREEN                                                 */
+/* ============================================================= */
+.outcome-section{
+  background:#111827;
+  padding:16px;
+  margin-bottom:16px;
+}
+.outcome-title{
+  font-size:12px;
+  color:#d4a017;
+  margin-bottom:12px;
+}
+.outcome-text{
+  font-size:10px;
+  line-height:2;
+  color:#c8c4b0;
+}
+.reflection-item{
+  font-size:10px;
+  color:#5ce0d8;
+  line-height:1.8;
+  padding:10px 12px;
+  background:#0f1629;
+  margin-bottom:8px;
+  border-left:3px solid #5ce0d8;
+}
+.cmp-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:9px;
+}
+.cmp-table th{
+  color:#d4a017;
+  text-align:left;
+  padding:8px;
+  border-bottom:2px solid #d4a017;
+}
+.cmp-table td{
+  padding:8px;
+  border-bottom:1px solid #1e293b;
+  color:#c8c4b0;
+}
+.tag-match{color:#4ade80;}
+.tag-diff{color:#f87171;}
+
+/* ============================================================= */
+/* FINAL SCREEN                                                   */
+/* ============================================================= */
+.final-archetype{
+  text-align:center;
+  padding:24px;
+  margin-bottom:20px;
+  background:#111827;
+}
+.final-archetype-title{
+  font-size:16px;
+  color:#d4a017;
+  text-shadow:0 0 20px rgba(212,160,23,0.4);
+  margin-bottom:12px;
+}
+.final-archetype-desc{
+  font-size:10px;
+  color:#c8c4b0;
+  line-height:2;
+}
+
+/* Tabs */
+.tab-bar{
+  display:flex;
+  gap:4px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+.tab-btn{
+  font-family:'Press Start 2P',monospace;
+  font-size:8px;
+  padding:10px 14px;
+  background:#111827;
+  color:#64748b;
+  border:2px solid #334155;
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.tab-btn.active,.tab-btn:hover{
+  color:#d4a017;
+  border-color:#d4a017;
+  background:#1a1a2e;
+}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* Timeline */
+.tl-item{
+  display:flex;
+  gap:12px;
+  margin-bottom:16px;
+  padding:12px;
+  background:#111827;
+}
+.tl-dot{
+  width:12px;height:12px;
+  border-radius:0;
+  flex-shrink:0;
+  margin-top:4px;
+}
+.tl-body{flex:1;}
+.tl-brand{font-size:9px;color:#d4a017;margin-bottom:6px;}
+.tl-choice{font-size:9px;color:#c8c4b0;line-height:1.8;margin-bottom:4px;}
+.tl-reason{font-size:9px;color:#5ce0d8;font-style:italic;margin-bottom:4px;line-height:1.6;}
+.tl-real{font-size:9px;color:#94a3b8;margin-top:4px;}
+
+/* Reveals */
+.reveal-card{
+  background:#111827;
+  padding:16px;
+  margin-bottom:12px;
+  border-left:3px solid #d4a017;
+}
+.reveal-brand{font-size:10px;color:#d4a017;margin-bottom:6px;}
+.reveal-real{font-size:9px;color:#f0c040;line-height:1.8;}
+
+/* Leaderboard */
+.lb-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:8px;
+}
+.lb-table th{
+  color:#d4a017;
+  text-align:left;
+  padding:8px 6px;
+  border-bottom:2px solid #d4a017;
+}
+.lb-table td{
+  padding:8px 6px;
+  border-bottom:1px solid #1e293b;
+  color:#c8c4b0;
+}
+.lb-table tr.me{background:rgba(92,224,216,0.08);}
+.pill-inv{color:#3b82f6;}
+.pill-esg{color:#4ade80;}
+.pill-score{color:#d4a017;}
+
+/* Distribution */
+.dist-title{
+  font-size:9px;
+  color:#d4a017;
+  margin-bottom:8px;
+}
+.bar-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:4px;
+  font-size:9px;
+}
+.bar-label{width:20px;color:#d4a017;font-weight:bold;}
+.bar-track{
+  flex:1;
+  height:14px;
+  background:#1e293b;
+  border:1px solid #334155;
+  overflow:hidden;
+}
+.bar-fill{
+  height:100%;
+  background:#3b82f6;
+  transition:width 0.5s;
+}
+.bar-fill.real{background:#f59e0b;}
+.bar-fill.you{background:#4ade80;}
+.bar-pct{width:40px;color:#94a3b8;text-align:right;}
+.bar-badges{display:flex;gap:4px;}
+.badge{font-size:7px;padding:2px 6px;border:1px solid;}
+.badge-you{color:#4ade80;border-color:#4ade80;}
+.badge-real{color:#f59e0b;border-color:#f59e0b;}
+
+/* ============================================================= */
+/* GAME OVER                                                      */
+/* ============================================================= */
+.gameover-screen{
+  justify-content:center;
+  align-items:center;
+  gap:24px;
+  text-align:center;
+}
+.gameover-title{
+  font-size:24px;
+  color:#f87171;
+  text-shadow:0 0 30px rgba(248,113,113,0.5);
+  animation:glow-red 1.5s ease-in-out infinite alternate;
+}
+@keyframes glow-red{
+  from{text-shadow:0 0 10px rgba(248,113,113,0.3);}
+  to{text-shadow:0 0 40px rgba(248,113,113,0.6),0 0 80px rgba(248,113,113,0.2);}
+}
+.gameover-reason{
+  font-size:10px;
+  color:#fca5a5;
+  line-height:1.8;
+  max-width:500px;
+}
+.gameover-scores{
+  display:flex;gap:20px;
+}
+.go-score-box{
+  padding:16px 24px;
+  text-align:center;
+}
+.go-score-label{font-size:8px;color:#94a3b8;margin-bottom:6px;}
+.go-score-val{font-size:20px;font-weight:bold;}
+
+
+
+/* ============================================================= */
+/* SCORE CHANGE OVERLAY                                           */
+/* ============================================================= */
+.score-change-overlay{
+  display:none;
+  position:fixed;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:400;
+  text-align:center;
+  pointer-events:none;
+}
+.score-change-text{
+  font-size:18px;
+  font-weight:bold;
+  animation:score-pop 1.2s ease forwards;
+}
+@keyframes score-pop{
+  0%{opacity:0;transform:scale(0.5) translateY(0);}
+  30%{opacity:1;transform:scale(1.2) translateY(-10px);}
+  100%{opacity:0;transform:scale(1) translateY(-40px);}
+}
+
+/* ============================================================= */
+/* RESPONSIVE                                                     */
+/* ============================================================= */
+@media(max-width:600px){
+  .dialogue-box{
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    padding:12px;
+    min-height:auto;
+  }
+  .dialogue-portrait-wrap{
+    flex-direction:row;
+    gap:8px;
+  }
+  .dialogue-portrait{width:64px;height:64px;}
+  .dialogue-text{font-size:10px;line-height:1.8;}
+  .char-cards{flex-direction:column;align-items:center;}
+  .hud-inner{flex-direction:column;gap:8px;}
+  .opt-item{font-size:9px;}
+  .tab-btn{font-size:7px;padding:8px 10px;}
+  .title-name{font-size:14px;}
+  .modal-box{padding:16px;}
+  .gameover-scores{flex-direction:column;}
+}
+
+/* scroll helper */
+.spacer-dialogue{height:160px;}
+
+/* ============================================================= */
+/* IMPROVEMENTS — HIGH & MEDIUM PRIORITY                         */
+/* ============================================================= */
+
+/* --- [HIGH] Minimum font-size enforcement --- */
+.hud-bar-label{font-size:10px !important;}
+.hud-progress{font-size:10px !important;}
+.hud-bar-value{font-size:14px !important;color:#fff;}
+.tab-btn{font-size:10px !important;padding:10px 16px !important;flex:1;min-width:120px;}
+.tl-brand,.tl-choice,.tl-reason,.tl-real{font-size:10px !important;}
+.lb-table th,.lb-table td{font-size:10px !important;}
+.dist-title,.bar-row{font-size:10px !important;}
+.badge{font-size:8px !important;}
+.cmp-table{font-size:10px !important;}
+.go-score-label{font-size:10px !important;}
+.opt-item{font-size:11px !important;line-height:1.9;}
+
+/* --- [HIGH] Char card larger portraits --- */
+.char-card{width:240px;}
+.char-portrait{width:128px;height:128px;}
+.char-bio{font-size:9px;color:#94a3b8;line-height:1.7;margin-top:8px;padding:0 4px;}
+
+/* --- [HIGH] BEGIN QUEST disabled state --- */
+.pixel-btn:disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+
+/* --- [HIGH] Error message as alert banner --- */
+.err-msg{
+  color:#f87171;
+  font-size:10px;
+  min-height:0;
+  overflow:hidden;
+  max-height:0;
+  transition:max-height 0.25s ease, padding 0.25s ease;
+  padding:0 12px;
+  border-left:3px solid #f87171;
+  background:rgba(248,113,113,0.08);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.err-msg.visible{
+  max-height:40px;
+  padding:8px 12px;
+}
+
+/* --- [HIGH] Mobile dialogue: inline avatar --- */
+@media(max-width:600px){
+  .dialogue-box{
+    flex-direction:row;
+    align-items:flex-start;
+    gap:10px;
+    padding:10px;
+    min-height:auto;
+  }
+  .dialogue-portrait-wrap{
+    flex-direction:column;
+    gap:4px;
+    flex-shrink:0;
+  }
+  .dialogue-portrait{width:48px;height:48px;}
+  .dialogue-name{font-size:8px;}
+  .dialogue-text{font-size:10px;line-height:1.8;}
+  .char-cards{flex-direction:column;align-items:center;}
+  .hud-inner{flex-direction:column;gap:8px;}
+  .opt-item{font-size:10px !important;}
+  .tab-btn{font-size:9px !important;padding:9px 10px !important;}
+  .title-name{font-size:14px;}
+  .modal-box{padding:16px;}
+  .gameover-scores{flex-direction:column;}
+  .char-card{width:100%;max-width:280px;}
+}
+
+/* --- [MEDIUM] HUD danger zone pulsing --- */
+@keyframes danger-pulse{
+  0%,100%{opacity:1;}
+  50%{opacity:0.55;}
+}
+.hud-bar-fill.danger{
+  background:linear-gradient(90deg,#7f1d1d,#f87171) !important;
+  animation:danger-pulse 0.9s ease-in-out infinite;
+}
+.hud-bar-track.danger-track{
+  border-color:#f87171;
+}
+
+/* --- [MEDIUM] HUD chapter breadcrumb dots --- */
+.hud-chapters{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  margin-top:6px;
+}
+.hud-ch-dot{
+  width:10px;height:10px;
+  border:2px solid #334155;
+  background:#1e293b;
+  transition:all 0.3s;
+  flex-shrink:0;
+}
+.hud-ch-dot.done{background:#d4a017;border-color:#d4a017;}
+.hud-ch-dot.active{background:#5ce0d8;border-color:#5ce0d8;box-shadow:0 0 6px rgba(92,224,216,0.5);}
+
+/* --- [MEDIUM] Modal entry animation --- */
+@keyframes modal-enter{
+  from{opacity:0;transform:scale(0.93) translateY(12px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+.modal-overlay.open .modal-box{
+  animation:modal-enter 0.22s ease-out forwards;
+}
+
+/* --- [MEDIUM] Modal consequence reveal flash --- */
+@keyframes consequence-flash{
+  0%{opacity:0;transform:translateY(8px);}
+  100%{opacity:1;transform:translateY(0);}
+}
+.modal-consequence{
+  animation:consequence-flash 0.35s ease forwards;
+}
+#modal-consequence-loading{
+  font-size:10px;
+  color:#5ce0d8;
+  text-align:center;
+  padding:12px;
+  letter-spacing:2px;
+}
+@keyframes ellipsis{
+  0%{content:'.';}
+  33%{content:'..';}
+  66%{content:'...';}
+}
+#modal-consequence-loading::after{
+  content:'...';
+  animation:ellipsis 1s steps(1) infinite;
+}
+
+/* --- [MEDIUM] Modal textarea — readable font --- */
+.modal-reason-input{
+  font-family:ui-monospace,Menlo,'Courier New',monospace !important;
+  font-size:12px !important;
+  line-height:1.6 !important;
+}
+
+/* --- [MEDIUM] Dialogue advance indicator larger + hint --- */
+.dialogue-advance{
+  font-size:20px !important;
+}
+.dialogue-click-hint{
+  font-size:8px;
+  color:#64748b;
+  text-align:right;
+  margin-top:2px;
+  letter-spacing:1px;
+}
+
+/* --- [MEDIUM] Speaker-coloured dialogue border --- */
+.dialogue-box.speaker-ceo{
+  border-color:#d4a017 !important;
+  box-shadow:
+    inset 0 0 0 2px #0c0e1a,
+    inset 0 0 0 4px #8b6914,
+    0 0 0 2px #0c0e1a,
+    0 0 0 4px #8b6914,
+    0 0 12px rgba(212,160,23,0.15) !important;
+}
+.dialogue-box.speaker-sec{
+  border-color:#5ce0d8 !important;
+  box-shadow:
+    inset 0 0 0 2px #0c0e1a,
+    inset 0 0 0 4px #2a8a84,
+    0 0 0 2px #0c0e1a,
+    0 0 0 4px #2a8a84,
+    0 0 12px rgba(92,224,216,0.15) !important;
+}
+
+/* --- [MEDIUM] Outcome section distinct icons/colours --- */
+.outcome-section-what .outcome-title::before{content:'📋 ';}
+.outcome-section-reflect .outcome-title::before{content:'💭 ';}
+.outcome-section-reflect .outcome-title{color:#5ce0d8;}
+.outcome-section-compare .outcome-title::before{content:'📊 ';}
+.outcome-section-compare .outcome-title{color:#4ade80;}
+
+/* --- [MEDIUM] Outcome score delta summary bar --- */
+.outcome-delta-summary{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+  padding:14px 16px;
+  background:#111827;
+  border-left:3px solid #d4a017;
+}
+.outcome-delta-label{font-size:9px;color:#94a3b8;margin-bottom:4px;}
+.outcome-delta-val{font-size:18px;font-weight:bold;}
+
+/* --- [MEDIUM] Sticky CONTINUE button on outcome screen --- */
+.outcome-continue-sticky{
+  position:sticky;
+  bottom:0;
+  background:linear-gradient(to top,#0c0e1a 70%,transparent);
+  padding:16px 0 20px;
+  text-align:center;
+  z-index:50;
+  margin-top:8px;
+}
+
+/* --- [MEDIUM] Game Over "what went wrong" section --- */
+.gameover-detail{
+  font-size:9px;
+  color:#94a3b8;
+  max-width:500px;
+  text-align:center;
+  line-height:1.8;
+  margin-top:-8px;
+}
+.gameover-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+/* --- [MEDIUM] Decision context card --- */
+.decision-context-card{
+  background:#0f1629;
+  border-left:3px solid #5ce0d8;
+  padding:12px 16px;
+  margin-bottom:12px;
+  font-size:10px;
+  color:#94a3b8;
+  line-height:1.9;
+}
+
+/* --- [MEDIUM] Selected char card scale animation --- */
+.char-card.selected{
+  transform:scale(1.05) !important;
+  border-color:#5ce0d8 !important;
+  box-shadow:
+    inset 0 0 0 2px #0c0e1a,
+    inset 0 0 0 4px #2a8a84,
+    0 0 0 2px #0c0e1a,
+    0 0 0 4px #2a8a84,
+    0 0 30px rgba(92,224,216,0.35) !important;
+}
+
+/* --- [MEDIUM] API error state for panels --- */
+.api-error-box{
+  background:#1a0a0a;
+  border:2px solid #f87171;
+  padding:16px;
+  text-align:center;
+  font-size:10px;
+  color:#f87171;
+  margin:8px 0;
+}
+.api-error-box button{margin-top:10px;}
+</style>
+</head>
+<body>
+
+
+
+<!-- ============================================================= -->
+<!-- SCREEN: ACCESS CODE                                           -->
+<!-- ============================================================= -->
+<div class="screen title-screen active" id="s-password">
+  <img src="images/titan-hero.jpg" class="title-logo pixel-border" alt="Titan Challenge"/>
+  <div class="title-name">TITAN CHALLENGE</div>
+  <div class="title-subtitle">— RPG EDITION —</div>
+  <div style="margin-top:12px;">
+    <input type="text" id="pw-input" class="pixel-input" placeholder="ACCESS CODE" maxlength="20"
+      onkeydown="if(event.key==='Enter')checkPassword()"/>
+  </div>
+  <div class="err-msg" id="pw-err"></div>
+  <button class="pixel-btn" onclick="checkPassword()">PRESS START</button>
+</div>
+
+<!-- ============================================================= -->
+<!-- SCREEN: CHARACTER SELECT                                      -->
+<!-- ============================================================= -->
+<div class="screen char-select" id="s-charselect">
+  <div class="char-select-title">SELECT YOUR CEO</div>
+  <div class="char-cards">
+    <div class="char-card pixel-border" id="char-male" onclick="selectChar('male')">
+      <div class="char-selected-check">★</div>
+      <img src="images/male-ceo.png" class="char-portrait" alt="Male CEO"/>
+      <div class="char-label">MALE CEO</div>
+      <div class="char-bio">15 years across private equity and ESG advisory. Built a track record of value-creating acquisitions with measurable sustainability outcomes.</div>
+    </div>
+    <div class="char-card pixel-border" id="char-female" onclick="selectChar('female')">
+      <div class="char-selected-check">★</div>
+      <img src="images/female-ceo.png" class="char-portrait" alt="Female CEO"/>
+      <div class="char-label">FEMALE CEO</div>
+      <div class="char-bio">15 years across ESG strategy and institutional investment. Known for aligning long-term financial returns with credible sustainability commitments.</div>
+    </div>
+  </div>
+  <div class="name-input-wrap">
+    <div class="name-label">ENTER YOUR NAME</div>
+    <input type="text" id="reg-name" class="pixel-input" placeholder="YOUR NAME" maxlength="40"
+      oninput="validateBeginQuest()"
+      onkeydown="if(event.key==='Enter')register()"/>
+    <div class="err-msg" id="reg-err"></div>
+    <button class="pixel-btn pixel-btn-cyan" id="begin-quest-btn" onclick="register()" disabled>BEGIN QUEST</button>
+  </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- SCREEN: INTRO (secretary introduces the game)                 -->
+<!-- ============================================================= -->
+<div class="screen" id="s-intro" style="justify-content:center;align-items:center;gap:20px;text-align:center;">
+  <img src="images/titan-hero.jpg" class="title-logo pixel-border" alt="Titan" style="max-width:500px;"/>
+  <div style="font-size:12px;color:#d4a017;margin-top:12px;">TITAN CHALLENGE</div>
+  <div id="intro-scores-hud" style="width:100%;max-width:500px;"></div>
+  <div style="font-size:9px;color:#5ce0d8;max-width:500px;line-height:2;margin-top:8px;">
+    Your secretary will brief you. Click the dialogue box to advance.
+  </div>
+  <button class="pixel-btn pixel-btn-green" id="intro-start-btn" onclick="startIntroDialogue()">OPEN BRIEFING</button>
+</div>
+
+<!-- ============================================================= -->
+<!-- SCREEN: DECISION (main gameplay)                              -->
+<!-- ============================================================= -->
+<div class="screen" id="s-decision">
+  <div class="hud" id="hud">
+    <div class="hud-inner pixel-border">
+      <div class="hud-bar-group">
+        <div class="hud-bar-label">
+          <span>INVESTOR CONFIDENCE</span>
+          <span class="hud-bar-value" id="hud-inv-val">15</span>
+        </div>
+        <div class="hud-bar-track" id="hud-inv-track">
+          <div class="hud-bar-fill inv" id="hud-inv-bar" style="width:50%"></div>
+        </div>
+      </div>
+      <div class="hud-bar-group">
+        <div class="hud-bar-label">
+          <span>ESG CREDIBILITY</span>
+          <span class="hud-bar-value" id="hud-esg-val">15</span>
+        </div>
+        <div class="hud-bar-track" id="hud-esg-track">
+          <div class="hud-bar-fill esg" id="hud-esg-bar" style="width:50%"></div>
+        </div>
+      </div>
+      <div class="hud-progress" id="hud-progress">Chapter 1/4 — Decision 1/2</div>
+      <div class="hud-chapters" id="hud-chapters">
+        <div class="hud-ch-dot active" id="hud-dot-0" title="Chapter 1: Rebel"></div>
+        <div class="hud-ch-dot" id="hud-dot-1" title="Chapter 2: Pure Skin"></div>
+        <div class="hud-ch-dot" id="hud-dot-2" title="Chapter 3: Clean Home"></div>
+        <div class="hud-ch-dot" id="hud-dot-3" title="Chapter 4: Herb"></div>
+      </div>
+    </div>
+  </div>
+  <img id="ch-img" class="chapter-scene pixel-border" src="" alt="" style="display:none;"/>
+  <div id="decision-menu" class="decision-menu"></div>
+  <div class="spacer-dialogue"></div>
+</div>
+
+<!-- ============================================================= -->
+<!-- SCREEN: OUTCOME                                               -->
+<!-- ============================================================= -->
+<div class="screen" id="s-outcome">
+  <div class="hud">
+    <div class="hud-inner pixel-border">
+      <div class="hud-bar-group">
+        <div class="hud-bar-label">
+          <span>INVESTOR CONFIDENCE</span>
+          <span class="hud-bar-value" id="out-inv-val">15</span>
+        </div>
+        <div class="hud-bar-track" id="out-inv-track">
+          <div class="hud-bar-fill inv" id="out-inv-bar" style="width:50%"></div>
+        </div>
+      </div>
+      <div class="hud-bar-group">
+        <div class="hud-bar-label">
+          <span>ESG CREDIBILITY</span>
+          <span class="hud-bar-value" id="out-esg-val">15</span>
+        </div>
+        <div class="hud-bar-track" id="out-esg-track">
+          <div class="hud-bar-fill esg" id="out-esg-bar" style="width:50%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="out-delta-summary" class="outcome-delta-summary pixel-border" style="margin-bottom:16px;"></div>
+  <div id="out-what" class="outcome-section outcome-section-what pixel-border" style="margin-bottom:16px;"></div>
+  <div id="out-reflect" class="outcome-section outcome-section-reflect pixel-border-blue" style="margin-bottom:16px;"></div>
+  <div id="out-compare" class="outcome-section outcome-section-compare pixel-border-green" style="margin-bottom:16px;"></div>
+  <div class="outcome-continue-sticky">
+    <button class="pixel-btn pixel-btn-green" id="out-next-btn" onclick="nextChapter()">CONTINUE</button>
+  </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- SCREEN: FINAL                                                 -->
+<!-- ============================================================= -->
+<div class="screen" id="s-final">
+  <div class="final-archetype pixel-border" id="final-archetype"></div>
+  <div id="final-scores-hud" style="margin-bottom:20px;"></div>
+  <div class="tab-bar" id="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('tp-timeline',this)">JOURNEY</button>
+    <button class="tab-btn" onclick="switchTab('tp-leaderboard',this)">LEADERBOARD</button>
+    <button class="tab-btn" onclick="switchTab('tp-distribution',this)">CLASS DATA</button>
+    <button class="tab-btn" onclick="switchTab('tp-reveals',this)">REVEALS</button>
+  </div>
+  <div class="tab-panel active" id="tp-timeline"></div>
+  <div class="tab-panel" id="tp-leaderboard"><div id="lb-content" style="font-size:9px;color:#64748b;">Loading...</div></div>
+  <div class="tab-panel" id="tp-distribution"><div id="dist-content" style="font-size:9px;color:#64748b;">Loading...</div></div>
+  <div class="tab-panel" id="tp-reveals"></div>
+  <div style="text-align:center;margin:24px 0 40px;">
+    <button class="pixel-btn" onclick="exportSummary()">EXPORT SUMMARY</button>
+  </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- SCREEN: GAME OVER                                             -->
+<!-- ============================================================= -->
+<div class="screen gameover-screen" id="s-gameover">
+  <div class="gameover-title">GAME OVER</div>
+  <div class="gameover-reason" id="go-reason"></div>
+  <div class="gameover-scores" id="go-scores"></div>
+  <div class="gameover-detail" id="go-detail"></div>
+  <div class="gameover-actions">
+    <button class="pixel-btn pixel-btn-red" onclick="location.reload()">TRY AGAIN</button>
+    <button class="pixel-btn" id="go-review-btn" onclick="showGameOverReview()" style="display:none;">VIEW MY CHOICES</button>
+  </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- CONFIRM MODAL                                                 -->
+<!-- ============================================================= -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-box pixel-border">
+    <div class="modal-title" id="modal-phase-title">CONFIRM DECISION</div>
+    <div class="modal-choice" id="modal-choice-text"></div>
+    <div class="modal-reason-wrap" id="modal-rationale-wrap">
+      <div class="modal-reason-label">WHY THIS CHOICE? (OPTIONAL)</div>
+      <textarea class="modal-reason-input" id="modal-reason" placeholder="Share your reasoning..."></textarea>
+    </div>
+    <div class="modal-consequence" id="modal-consequence">
+      <div class="modal-cons-text" id="modal-cons-text"></div>
+      <div class="modal-deltas" id="modal-deltas"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="pixel-btn pixel-btn-small" id="modal-back-btn" onclick="closeModal()">← BACK</button>
+      <button class="pixel-btn pixel-btn-small pixel-btn-cyan" id="modal-ok-btn" onclick="confirmChoice()">CONFIRM →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- DIALOGUE BOX (fixed at bottom)                                -->
+<!-- ============================================================= -->
+<div class="dialogue-overlay" id="dialogue-overlay">
+  <div class="dialogue-box pixel-border speaker-sec" id="dialogue-box" onclick="advanceDialogue()">
+    <div class="dialogue-portrait-wrap">
+      <img class="dialogue-portrait" id="dialogue-portrait" src="" alt=""/>
+      <div class="dialogue-name" id="dialogue-name"></div>
+    </div>
+    <div class="dialogue-text-area">
+      <div class="dialogue-text" id="dialogue-text"></div>
+      <div class="dialogue-advance" id="dialogue-advance">▼</div>
+      <div class="dialogue-click-hint" id="dialogue-click-hint" style="display:none;">CLICK TO CONTINUE</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCORE CHANGE OVERLAY -->
+<div class="score-change-overlay" id="score-change-overlay">
+  <div class="score-change-text" id="score-change-text"></div>
+</div>
+
+<script>
+// =========================================================
+// CONFIG
+// =========================================================
+const API_URL = 'https://script.google.com/macros/s/AKfycbwqFy-M55PaLksak-2K7x1TXEl0IuQDwbpZZ7JYLHfsM4fvvpcNoa5zla5YbvEIIhiI/exec';
+
+// =========================================================
+// GAME DATA — preserved exactly from original
+// =========================================================
+const CHAPTERS = [
+  {
+    id:'A', brand:'Rebel',
+    img:'images/ch-a.jpg',
+    realCompany:'Ben & Jerry\'s — Acquired by Unilever in 2000. Created an independent board, but overrode it in 2022 when Ben & Jerry\'s tried to stop sales in occupied Palestinian territories.',
+    opening:'Titan has just bought Rebel — a well-known food brand famous for two things: its popular products and its strong social activism. Rebel\'s founders believe business should drive social change. They speak publicly on political issues, support social justice campaigns, and have built a loyal customer base that buys their products partly because of these values. The founders agreed to sell only after Titan promised to protect Rebel\'s social mission. The price Titan paid includes a large premium for the brand\'s unique identity. Your first decisions will shape whether that promise means anything.',
+    decisions:[
+      {
+        title:'Decision A1 — Governance Structure',
+        context:'Rebel\'s founders want formal, legal protections for the brand\'s social mission — not just promises. Your legal team has prepared four options. Each one defines how much freedom Rebel will have.',
+        options:[
+          {l:'A',text:'Strong independent board — Create a fully independent board for Rebel. They have legal power to block any changes to the social mission. Titan can set financial goals but cannot override mission decisions.',inv:-3,esg:+8,cons:'Rebel now has a legally independent board with real power. Investors worry this limits Titan\'s control over a brand it paid a premium for — but ESG analysts are very impressed.'},
+          {l:'B',text:'Board with shared decisions — Create a semi-independent board. Rebel sets its own social mission, but if Titan disagrees, both sides must discuss it in a joint committee with equal members.',inv:+1,esg:-2,cons:'On paper, it looks like compromise. In practice, Rebel\'s founders know that a joint committee means Titan always has a veto. ESG credibility takes a quiet hit.'},
+          {l:'C',text:'Advisory board only — Create a board that can give advice, but all final decisions belong to Titan\'s main board.',inv:+5,esg:-4,cons:'Titan keeps full control. The governance structure looks good on paper, but the founders and ESG community know the advisory board has no real power.'},
+          {l:'D',text:'Time-limited independence — Give Rebel independence for 3 years only. After that, all governance returns to Titan. Call it a "transition period."',inv:+3,esg:-4,cons:'A compromise with a deadline. Rebel gets independence, but everyone knows it\'s temporary. Some critics call it a PR move.'},
+        ],
+        real:'A',
+      },
+      {
+        title:'Decision A2 — The Activism Crisis',
+        ctxByPrev:{
+          A:'Two years later, Rebel\'s independent board approves a major campaign that directly criticises one of Titan\'s biggest business partners for poor labour practices. Titan\'s partnership team is angry. They want you to stop the campaign. But under the structure you chose, Rebel\'s board has full authority.',
+          B:'Two years later, Rebel\'s board approves a campaign criticising a major Titan business partner. Under your framework, Titan can call for a joint review — but the process is slow and public. The partner demands immediate action.',
+          C:'Two years later, Rebel\'s advisory board recommends a major activism campaign. Since you kept final authority, you can approve or block it directly. But the founders are watching — and they have connections to the media.',
+          D:'Eighteen months into the three-year independence window, Rebel launches a campaign against a Titan business partner. You cannot technically intervene yet — but the partner is threatening to end a contract worth 5% of Titan\'s revenue.',
+        },
+        options:[
+          {l:'A',text:'Defend Rebel\'s freedom — Let the campaign go ahead. Accept the business consequences. Tell the partner that Rebel operates independently.',inv:-5,esg:+6,cons:'The campaign goes ahead. The business partner is furious and reduces orders. Titan takes a financial hit, but Rebel\'s brand loyalty surges. ESG credibility is strengthened.'},
+          {l:'B',text:'Renegotiate the boundaries — Open formal talks with Rebel\'s leadership about which future campaigns are acceptable. Call it "clarification," not censorship.',inv:+1,esg:-3,cons:'The talks begin, but they leak to the media. Headlines read "Titan tries to control activist brand." The process is messy, but it avoids direct confrontation.'},
+          {l:'C',text:'Block the campaign — Stop the campaign. Announce a formal review of Rebel\'s governance, saying you need to "protect Titan\'s broader business."',inv:+4,esg:-6,cons:'The campaign is killed. Rebel\'s founders go public with their frustration. Media stories question Titan\'s commitment to brand independence. ESG credibility takes a serious hit.'},
+        ],
+        real:'C',
+      },
+    ],
+    outcome:{
+      what:'The real company acquired the activist brand in 2000 and created an independent board with strong autonomy — similar to Option A in Decision 1. For over two decades, the brand campaigned on refugee rights, climate justice, and racial equality.\n\nIn 2022, the brand attempted to end sales in a politically contested territory. The parent company\'s board overrode this decision and sold those operations without the brand\'s consent — effectively blocking the campaign when the stakes became high enough.\n\nThe real path: strong governance at first, then override when the pressure became too great.',
+      reflections:['Looking at your choices, would the founders of Rebel trust you?','Is there a real difference between a governance structure that protects a brand\'s voice and one that protects it only until the pressure gets high enough?'],
+    },
+  },
+  {
+    id:'B', brand:'Pure Skin',
+    img:'images/ch-b.jpg',
+    realCompany:'REN Clean Skincare — Acquired by Unilever in 2015. Partially integrated, then struggled financially. By 2024–2025 the brand was quietly wound down and its products discontinued.',
+    opening:'Your scores carry forward. People are watching whether Titan\'s treatment of Pure Skin matches how it handled Rebel.\n\nTitan has acquired Pure Skin — a premium skincare brand built on two promises: zero harmful chemicals and zero-waste packaging. Pure Skin was a pioneer in the \'clean beauty\' movement. Its loyal customers pay higher prices specifically because of these promises.\n\nThe acquisition was announced as proof that Titan is serious about sustainability across its entire business.',
+    decisions:[
+      {
+        title:'Decision B1 — Integration Strategy',
+        context:'Pure Skin needs money to grow. Its zero-waste packaging costs much more than Titan\'s standard packaging. Its chemical-free products need separate manufacturing. Your operations team presents four options.',
+        options:[
+          {l:'A',text:'Full separation — invest heavily: Keep Pure Skin\'s supply chain completely separate. Build dedicated factories that maintain all sustainability promises. Cost: high. Time: 18 months.',inv:-4,esg:+5,cons:'Pure Skin gets its own supply chain. Costs are very high, but the brand\'s sustainability promises are fully kept. Investors question whether this will ever be profitable.'},
+          {l:'B',text:'Partial integration: Use Titan\'s distribution and marketing, but keep separate manufacturing for Pure Skin\'s main products. Some cost savings, some sustainability kept.',inv:+1,esg:+1,cons:'A practical middle ground. Pure Skin keeps its manufacturing standards for key products while using Titan\'s scale for distribution. Some compromises, but the core identity holds.'},
+          {l:'C',text:'Full integration with targets: Move Pure Skin into Titan\'s standard operations. Set internal sustainability targets — but these targets are not legally required.',inv:+4,esg:-3,cons:'Pure Skin is absorbed into Titan\'s operations. The sustainability targets are aspirational, not enforceable. Cost savings are significant, but the brand\'s authenticity is at risk.'},
+          {l:'D',text:'Absorb into Titan: Integrate immediately into Titan\'s standard supply chain. Gradually rebrand as a \'premium natural\' line within Titan\'s existing beauty business.',inv:+5,esg:-5,cons:'Pure Skin exists in name only within Titan\'s beauty division. The premium customers begin to leave. Short-term financial gains, long-term brand damage.'},
+        ],
+        real:'B',
+      },
+      {
+        title:'Decision B2 — The Portfolio Review',
+        ctxByPrev:{
+          A:'Three years later, Pure Skin\'s dedicated facilities are working but the brand is losing money. The premium positioning works in Western markets but has not grown in Asia. Your board is asking hard questions.',
+          B:'Three years later, the partial integration model is more expensive than expected. Sales are flat. The board wants answers.',
+          C:'Three years later, most internal sustainability targets have been quietly missed. The brand still markets itself as \'clean,\' but insiders know the reality has shifted. Sales are falling.',
+          D:'Two years later, Pure Skin is barely recognisable. The \'clean beauty\' customer base has mostly left. The name survives but the identity is gone.',
+        },
+        options:[
+          {l:'A',text:'Invest more — Put more money into Pure Skin. Accept short-term losses for long-term brand value.',inv:-3,esg:+5,cons:'More money flows to Pure Skin. It\'s a bet on the brand\'s long-term value. Investors are unhappy about continued losses, but ESG credibility grows.'},
+          {l:'B',text:'Wait and see — Keep current investment levels. Set a 2-year review period. No big moves in either direction.',inv:0,esg:-1,cons:'Nothing changes. The review period gives everyone breathing room, but it also delays any real solution. The brand slowly drifts.'},
+          {l:'C',text:'Cut back — Reduce investment to break-even levels. Make Pure Skin a smaller, niche brand within Titan.',inv:+3,esg:-4,cons:'Pure Skin becomes a small, quiet brand in Titan\'s portfolio. The sustainability story fades. Costs are under control, but the acquisition\'s original purpose is lost.'},
+          {l:'D',text:'Sell or close — Exit the brand. Either find a buyer or close it down.',inv:+4,esg:-6,cons:'Pure Skin is gone. Titan writes off the investment. The market notes that another ESG acquisition failed to survive inside a large company.'},
+        ],
+        real:'D',
+      },
+    ],
+    outcome:{
+      what:'The parent company acquired this clean beauty brand in 2015. At first, the brand kept its identity and product commitments — similar to Option B in Decision 1.\n\nBut the brand struggled to grow. By 2021, it was losing money. The parent company tried to sell it but could not find a buyer at an acceptable price. By 2024–2025, the brand was quietly shut down.\n\nThe real path: partial integration, followed by closure when financial results disappointed. The brand\'s sustainability identity survived on paper for several years but was never given the dedicated investment needed to succeed.',
+      reflections:['At what point does under-investment in a brand become the same as destroying it?','Should Titan have known before buying Pure Skin that its sustainability promises were too expensive to keep at corporate scale?'],
+    },
+  },
+  {
+    id:'C', brand:'Clean Home',
+    img:'images/ch-c.jpg',
+    realCompany:'Seventh Generation — Acquired by Unilever in 2016 for ~$700M. The brand\'s products survived but its political activism was gradually silenced through review processes.',
+    opening:'Your scores carry forward. The market is now watching Titan\'s pattern across multiple acquisitions.\n\nTitan has acquired Clean Home — a household cleaning brand built entirely on environmental activism. Clean Home\'s products are plant-based, its packaging is recycled, and its founding team has spent decades publicly campaigning for environmental laws, plastic reduction, and corporate accountability — including campaigns targeting companies very similar to Titan.\n\nClean Home\'s customers are not just buying cleaning products. They are buying the brand\'s political identity. The founders agreed to sell only because they believed Titan\'s ESG commitments were genuine.',
+    decisions:[
+      {
+        title:'Decision C1 — Brand Voice',
+        context:'Clean Home\'s founding team wants to continue publishing their annual Corporate Responsibility Report — including public positions on environmental laws and criticism of industry lobbying. Titan\'s legal team warns that some positions directly contradict Titan\'s own lobbying positions in several countries.',
+        options:[
+          {l:'A',text:'Full voice — no restrictions: Let Clean Home publish without interference. Accept that some positions will conflict with Titan\'s own lobbying.',inv:-3,esg:+6,cons:'Clean Home\'s team is energised. They publish a hard-hitting report that gets media attention — some of it uncomfortable for Titan. ESG credibility rises significantly.'},
+          {l:'B',text:'Voice with review process: Let Clean Home publish, but require Titan\'s government affairs team to review the report first. Positions that directly conflict with Titan\'s lobbying must be discussed before publication.',inv:+1,esg:-2,cons:'The review process adds a layer of friction. Clean Home can still publish, but the review creates a quiet negotiation that shapes what gets said.'},
+          {l:'C',text:'Product voice only: Clean Home can talk about its products and packaging, but public positions on laws or regulation need Titan\'s approval.',inv:+3,esg:-4,cons:'Clean Home can talk about its products, but its political voice is silenced. The founders feel betrayed. The brand becomes a green product line, not an activist.'},
+          {l:'D',text:'Full editorial control: All external communications from Clean Home must be approved by Titan\'s communications team before publication.',inv:+4,esg:-6,cons:'Clean Home\'s communications are now fully controlled by Titan. The founders are furious. The brand\'s activist identity is effectively ended on day one.'},
+        ],
+        real:'B',
+      },
+      {
+        title:'Decision C2 — The Plastic Campaign',
+        ctxByPrev:{
+          A:'Three years later, Clean Home\'s founders propose a major public campaign calling for a legal ban on single-use plastic packaging — the kind of packaging used by several of Titan\'s other major brands. Under your full-voice policy, they don\'t need permission. But Titan\'s other brands division warns this campaign could cost Titan hundreds of millions.',
+          B:'Three years later, during the required review, Clean Home flags a proposed campaign for a legal ban on single-use plastics — targeting packaging used by Titan\'s own brands. The review process you created is now being tested by exactly the conflict it was designed to handle.',
+          C:'Three years later, Clean Home\'s founders want to launch a campaign against single-use plastics. Under your rules, this needs Titan\'s approval. The founders say the campaign is about product quality, not politics.',
+          D:'Three years later, Clean Home submits a campaign against single-use plastics for approval. Your communications team flags it as a direct threat to Titan\'s other brands. The founders are already frustrated by months of delays.',
+        },
+        options:[
+          {l:'A',text:'Approve the campaign — Let Clean Home run the campaign as planned, even though it targets Titan\'s own products.',inv:-5,esg:+7,cons:'The campaign launches and creates a media storm. Titan is publicly criticised for undermining its own products. But Clean Home\'s credibility reaches new heights.'},
+          {l:'B',text:'Approve a narrower version — Allow the campaign but ask Clean Home to focus on general plastic reduction rather than a specific ban.',inv:+1,esg:-2,cons:'A watered-down campaign goes out. Clean Home\'s founders are disappointed but stay. The message is weaker, and some activists say Titan censored the original.'},
+          {l:'C',text:'Block it quietly — Ask the founders to stop the campaign, saying the timing is wrong and Titan needs "internal alignment." Do not make the block public.',inv:+3,esg:-4,cons:'The campaign is stopped. The founders are told it\'s temporary. But everyone knows it\'s not. Clean Home\'s activist identity is effectively over.'},
+          {l:'D',text:'Block it publicly — Issue a statement saying Titan supports plastic reduction but disagrees with a legal ban.',inv:+2,esg:-5,cons:'Titan publicly disagrees with its own subsidiary. The statement is seen as honest by some — but Clean Home\'s founders see it as a betrayal.'},
+        ],
+        real:'C',
+      },
+    ],
+    outcome:{
+      what:'The parent company acquired this environmental cleaning brand in 2016 for approximately $700 million. The brand was not just a green product company — it was a political activist.\n\nAfter the acquisition, the brand kept its products but its political activism was gradually quieted. The real path was similar to Option B then Option C — the brand kept its product-focused sustainability communications but its political voice was slowly muted through review processes that worked as quiet censorship.\n\nThe products survived. The political identity did not.',
+      reflections:['Is there a real difference between a brand that is told what it cannot say and a brand that learns over time what is safe to say?','If Clean Home\'s founders resigned over the plastic campaign decision, how would you explain Titan\'s position to journalists?'],
+    },
+  },
+  {
+    id:'D', brand:'Herb',
+    img:'images/ch-d.jpg',
+    realCompany:'Pukka Herbs — Acquired by Unilever in 2017. Sold to CVC Capital Partners in 2021 as part of a €4.5B tea business sale. By 2024, Pukka lost its B Corp certification, its offices were closed, and 90 of 120 staff were made redundant.',
+    opening:'Your scores carry forward. You are now managing four ESG brand acquisitions. Your pattern of decisions is becoming clear — or unclear.\n\nTitan has acquired Herb — a small but fast-growing organic herbal tea and wellness brand. Herb was founded by two people: a business entrepreneur and a master herbalist. Every product is 100% certified organic. The brand holds multiple ethical certifications, donates 1% of all sales to environmental causes, and sources ingredients through fair trade programmes.\n\nHerb\'s founders agreed to sell to Titan because they believed Titan\'s sustainability plan was genuine. The herbalist co-founder has agreed to stay on in an advisory role to protect the brand\'s values.',
+    decisions:[
+      {
+        title:'Decision D1 — Growth Strategy',
+        context:'Herb is growing at 30% per year. Titan\'s beverage division sees huge global potential, especially in Asian wellness markets. But scaling the brand means making choices about how to grow. Herb\'s organic certification requires strict standards. Its ethical sourcing means paying farmers above-market prices.',
+        options:[
+          {l:'A',text:'Grow slowly, keep all standards — Expand Herb gradually, keeping all organic certifications and ethical sourcing. Accept slower growth and higher costs.',inv:-3,esg:+6,cons:'Herb grows slowly but keeps everything that makes it special. Investors push back on the pace, but the brand\'s certifications and relationships remain intact.'},
+          {l:'B',text:'Grow with some flexibility — Expand faster by using some of Titan\'s existing tea supply chain where it meets organic standards. Keep all certifications but accept some sourcing flexibility.',inv:+1,esg:-1,cons:'Herb grows faster while mostly keeping its standards. Some new product lines use Titan\'s supply chain. The co-founder is watchful but stays.'},
+          {l:'C',text:'Prioritise scale — Move Herb\'s production into Titan\'s main tea facilities. Maintain organic certification where possible but prioritise volume and efficiency.',inv:+4,esg:-4,cons:'Herb\'s production moves to Titan\'s facilities. Volume goes up, but sourcing standards begin to slip. The co-founder raises concerns that are noted but not acted on.'},
+          {l:'D',text:'Full integration into beverage division — Make Herb a product line within Titan\'s global tea business. Keep the brand name and organic label where regulations require it.',inv:+5,esg:-6,cons:'Herb becomes a brand name on Titan\'s tea products. The founders\' vision is replaced by corporate tea operations. Fast growth, but the soul of the brand is lost.'},
+        ],
+        real:'A',
+      },
+      {
+        title:'Decision D2 — The Ownership Change',
+        ctxByPrev:{
+          A:'Four years later, Titan announces it is selling its entire tea business to a private equity firm for billions. Herb is included in the sale. The co-founder who stayed on as advisor is alarmed — a private equity owner will have no obligation to maintain Herb\'s certifications, ethical sourcing, or charitable donations. She asks you to separate Herb from the tea sale.',
+          B:'Four years later, Titan is selling its tea business to a private equity firm. Herb\'s co-founder learns that under the new owner, several of the ethical certifications she fought to maintain will likely be reviewed for cost efficiency. She asks you to protect Herb before the sale.',
+          C:'Four years later, Titan sells its tea business. Herb is already deeply integrated into Titan\'s tea operations. The co-founder left two years ago after disagreements about sourcing standards.',
+          D:'Four years later, Titan sells its tea business. Herb has been a product line within the division for years. The founders are long gone. The organic label is maintained where legally required.',
+        },
+        options:[
+          {l:'A',text:'Separate Herb from the sale — Remove Herb from the tea business sale. Either keep it within Titan or find a buyer who will protect its values. This will complicate the deal.',inv:-4,esg:+6,cons:'Herb is removed from the tea sale. The larger deal is delayed and costs more. But the brand gets a chance to survive with its values intact.'},
+          {l:'B',text:'Negotiate protections in the sale — Include Herb in the sale but negotiate conditions with the buyer to maintain organic certification and ethical sourcing for a set period.',inv:+1,esg:-1,cons:'Protections are written into the sale contract. Whether the new owner respects them is another question — but Titan has done what it can.'},
+          {l:'C',text:'Include without conditions — Sell Herb as part of the package. The buyer can decide what to do with the brand. Focus on completing the deal cleanly.',inv:+4,esg:-5,cons:'Herb is sold as part of the package. Its future is now in the hands of a private equity firm focused on returns. The co-founder\'s concerns are politely noted.'},
+          {l:'D',text:'Accelerate the sale — Push to close the deal quickly. Herb is a small part of a multi-billion deal. Do not let it slow things down.',inv:+3,esg:-4,cons:'The deal closes fast. Herb is a line item in a multi-billion transaction. No one at the negotiating table is thinking about organic certification or fair trade farmers.'},
+        ],
+        real:'C',
+      },
+    ],
+    outcome:{
+      what:'The parent company acquired this organic herbal tea brand in 2017. The brand was the fastest-growing organic tea company in the world, with 100% certified organic ingredients, B Corp certification, and fair trade sourcing.\n\nAt first, the brand kept its independence — the co-founder stayed on, certifications were maintained, and a special \'Mission Council\' was created to protect the brand\'s values.\n\nBut in 2021, the parent company sold its entire tea business to a private equity firm for €4.5 billion. The herbal brand was included with no special protections. By 2023, the brand\'s offices were closed, 90 of 120 staff were let go. In 2024, the brand lost its B Corp certification.\n\nThe real path for Decision 2: the brand was sold as part of a larger deal with no conditions.',
+      reflections:['When a company sells a brand it promised to protect, who is responsible for what happens next?','Can a brand built on personal values (a herbalist, a mission, specific farmers) ever truly survive corporate ownership?'],
+    },
+  },
+];
+
+const CEO_PROFILES = [
+  {min:14, title:'The Mission CEO', desc:'You consistently protected every brand\'s identity, even at significant cost to investors. This is the rarest path. Very few real CEOs have maintained this level of commitment across multiple acquisitions.'},
+  {min:11, title:'The Principled Leader', desc:'You mostly protected the brands you acquired, though you made practical compromises when the pressure became intense. Your ESG credibility is strong but not untested.'},
+  {min:6,  title:'The Pragmatic Manager', desc:'You balanced investor demands with ESG commitments, sometimes protecting brands and sometimes prioritising efficiency. This is the most common path — and the most common criticism of large companies managing ESG brands.'},
+  {min:2,  title:'The Efficiency CEO', desc:'You prioritised financial performance and operational efficiency across most decisions. The brands you acquired may have lost their original identity, but your investors are satisfied.'},
+  {min:-99,title:'The Corporate Machine', desc:'Every decision prioritised control, efficiency, and investor returns. The ESG brands you acquired have been absorbed into the corporate structure. Their names may survive, but their missions do not.'},
+];
+
+// =========================================================
+// STATE
+// =========================================================
+let G = {
+  inv:15, esg:15,
+  chIdx:0, dIdx:0,
+  name:'', email:'',
+  gender:'', // 'male' or 'female'
+  secName:'', // Elena or Marcus
+  secImg:'', // secretary portrait path
+  ceoImg:'', // ceo portrait path
+  honorific:'', // Sir or Ma'am
+  history:[],
+  pending:null,
+  showingCons:false,
+  muted:false,
+};
+
+// =========================================================
+// AUDIO (Web Audio API)
+// =========================================================
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playClick(){
+  if(G.muted) return;
+  try{
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    osc.frequency.setValueAtTime(600, ctx.currentTime + 0.05);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.1);
+  }catch(e){}
+}
+
+function playBlip(){
+  if(G.muted) return;
+  try{
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(440 + Math.random()*100, ctx.currentTime);
+    gain.gain.setValueAtTime(0.03, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.04);
+  }catch(e){}
+}
+
+function playFanfare(){
+  if(G.muted) return;
+  try{
+    const ctx = getAudioCtx();
+    const notes = [523, 659, 784, 1047];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime + i * 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.3);
+      osc.start(ctx.currentTime + i * 0.15);
+      osc.stop(ctx.currentTime + i * 0.15 + 0.3);
+    });
+  }catch(e){}
+}
+
+function playGameOver(){
+  if(G.muted) return;
+  try{
+    const ctx = getAudioCtx();
+    const notes = [440, 370, 311, 262];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.25);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime + i * 0.25);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.25 + 0.4);
+      osc.start(ctx.currentTime + i * 0.25);
+      osc.stop(ctx.currentTime + i * 0.25 + 0.4);
+    });
+  }catch(e){}
+}
+
+function toggleMute(){ G.muted = !G.muted; }
+
+// =========================================================
+// DIALOGUE SYSTEM
+// =========================================================
+let dialogueQueue = [];
+let dialogueTyping = false;
+let dialogueComplete = false;
+let dialogueFullText = '';
+let dialogueCharIdx = 0;
+let dialogueTimer = null;
+let dialogueCallback = null; // called when queue is empty
+
+function showDialogue(speaker, portrait, messages, callback){
+  dialogueCallback = callback || null;
+  dialogueQueue = [];
+  
+  // Determine speaker type for border colouring
+  // CEO portrait paths contain 'ceo'; secretary contain 'secretary'
+  const isCeo = portrait && portrait.includes('ceo');
+  const box = document.getElementById('dialogue-box');
+  box.classList.remove('speaker-ceo','speaker-sec');
+  box.classList.add(isCeo ? 'speaker-ceo' : 'speaker-sec');
+
+  messages.forEach(msg => {
+    const pages = splitDialogue(msg);
+    pages.forEach(p => dialogueQueue.push({speaker, portrait, text: p}));
+  });
+  
+  document.getElementById('dialogue-overlay').classList.add('active');
+  showNextDialogue();
+}
+
+function splitDialogue(text, maxLen = 120){
+  if(text.length <= maxLen) return [text];
+  const pages = [];
+  const words = text.split(' ');
+  let current = '';
+  words.forEach(w => {
+    if((current + ' ' + w).trim().length > maxLen && current.length > 0){
+      pages.push(current.trim());
+      current = w;
+    } else {
+      current = current ? current + ' ' + w : w;
+    }
+  });
+  if(current.trim()) pages.push(current.trim());
+  return pages;
+}
+
+function showNextDialogue(){
+  if(dialogueQueue.length === 0){
+    document.getElementById('dialogue-overlay').classList.remove('active');
+    if(dialogueCallback) dialogueCallback();
+    return;
+  }
+  const entry = dialogueQueue.shift();
+  document.getElementById('dialogue-portrait').src = entry.portrait;
+  document.getElementById('dialogue-name').textContent = entry.speaker;
+  document.getElementById('dialogue-text').textContent = '';
+  document.getElementById('dialogue-advance').style.display = 'none';
+  
+  dialogueFullText = entry.text;
+  dialogueCharIdx = 0;
+  dialogueTyping = true;
+  dialogueComplete = false;
+  
+  clearInterval(dialogueTimer);
+  dialogueTimer = setInterval(() => {
+    if(dialogueCharIdx < dialogueFullText.length){
+      document.getElementById('dialogue-text').textContent += dialogueFullText[dialogueCharIdx];
+      dialogueCharIdx++;
+      playBlip();
+    } else {
+      clearInterval(dialogueTimer);
+      dialogueTyping = false;
+      dialogueComplete = true;
+      document.getElementById('dialogue-advance').style.display = 'block';
+      document.getElementById('dialogue-click-hint').style.display = 'block';
+    }
+  }, 30);
+}
+
+function advanceDialogue(){
+  if(dialogueTyping){
+    clearInterval(dialogueTimer);
+    document.getElementById('dialogue-text').textContent = dialogueFullText;
+    dialogueTyping = false;
+    dialogueComplete = true;
+    document.getElementById('dialogue-advance').style.display = 'block';
+    document.getElementById('dialogue-click-hint').style.display = 'block';
+    return;
+  }
+  if(dialogueComplete){
+    document.getElementById('dialogue-click-hint').style.display = 'none';
+    playClick();
+    showNextDialogue();
+  }
+}
+
+// Allow keyboard advance
+document.addEventListener('keydown', e => {
+  if(e.key === ' ' || e.key === 'Enter'){
+    const overlay = document.getElementById('dialogue-overlay');
+    if(overlay.classList.contains('active')){
+      e.preventDefault();
+      advanceDialogue();
+      return;
+    }
+  }
+  if(e.key === 'Enter'){
+    const active = document.querySelector('.screen.active');
+    if(active && active.id === 's-password') checkPassword();
+    else if(active && active.id === 's-charselect') register();
+  }
+});
+
+// =========================================================
+// HELPERS
+// =========================================================
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  // Clear keyboard option map when leaving decision screen
+  if(id !== 's-decision') window._currentOptMap = null;
+}
+
+function updateHUD(){
+  const maxScore = 30;
+  const invPct = Math.min(100, Math.max(0, (G.inv / maxScore) * 100));
+  const esgPct = Math.min(100, Math.max(0, (G.esg / maxScore) * 100));
+  const invDanger = G.inv <= 5;
+  const esgDanger = G.esg <= 5;
+
+  function applyBar(barId, trackId, valId, pct, val, danger){
+    const bar = document.getElementById(barId);
+    const track = document.getElementById(trackId);
+    const valEl = document.getElementById(valId);
+    if(bar){
+      bar.style.width = pct + '%';
+      if(danger){ bar.classList.add('danger'); } else { bar.classList.remove('danger'); }
+    }
+    if(track){
+      if(danger){ track.classList.add('danger-track'); } else { track.classList.remove('danger-track'); }
+    }
+    if(valEl){
+      valEl.textContent = val;
+      valEl.style.color = danger ? '#f87171' : '#fff';
+    }
+  }
+
+  applyBar('hud-inv-bar','hud-inv-track','hud-inv-val', invPct, G.inv, invDanger);
+  applyBar('hud-esg-bar','hud-esg-track','hud-esg-val', esgPct, G.esg, esgDanger);
+  applyBar('out-inv-bar','out-inv-track','out-inv-val', invPct, G.inv, invDanger);
+  applyBar('out-esg-bar','out-esg-track','out-esg-val', esgPct, G.esg, esgDanger);
+
+  // Update breadcrumb dots
+  for(let i = 0; i < 4; i++){
+    const dot = document.getElementById('hud-dot-' + i);
+    if(!dot) continue;
+    dot.classList.remove('done','active');
+    if(i < G.chIdx) dot.classList.add('done');
+    else if(i === G.chIdx) dot.classList.add('active');
+  }
+}
+
+function updateProgress(){
+  const total = CHAPTERS.reduce((a,c) => a + c.decisions.length, 0);
+  const current = CHAPTERS.slice(0, G.chIdx).reduce((a,c) => a + c.decisions.length, 0) + G.dIdx;
+  const prog = document.getElementById('hud-progress');
+  if(prog) prog.textContent = `Chapter ${G.chIdx+1}/4 — Decision ${G.dIdx+1}/2`;
+}
+
+function pill(v, label){
+  const cls = v > 0 ? 'dp-pos' : v < 0 ? 'dp-neg' : 'dp-zero';
+  return `<span class="delta-pill ${cls}">${label}: ${v > 0 ? '+' : ''}${v}</span>`;
+}
+
+function isGameOver(){
+  return G.inv <= 0 || G.esg <= 0;
+}
+
+function archetype(){
+  let score = 0;
+  G.history.forEach(h => { if(h.letter === 'A') score += 2; else if(h.letter === 'B') score += 1; });
+  return CEO_PROFILES.find(p => score >= p.min);
+}
+
+function api(body){
+  return fetch(API_URL, {method:'POST', body:JSON.stringify(body)})
+    .then(r => r.json()).catch(() => ({ok:false}));
+}
+
+function apiGet(action){
+  return fetch(`${API_URL}?action=${action}`)
+    .then(r => r.json()).catch(() => ({ok:false}));
+}
+
+function showScoreChange(inv, esg){
+  const el = document.getElementById('score-change-overlay');
+  let html = '';
+  if(inv !== 0){
+    const c = inv > 0 ? '#4ade80' : '#f87171';
+    const sign = inv > 0 ? '+' : '';
+    html += `<div class="score-change-text" style="color:${c}">${sign}${inv} INV ${inv > 0 ? '▲' : '▼'}</div>`;
+  }
+  if(esg !== 0){
+    const c = esg > 0 ? '#4ade80' : '#f87171';
+    const sign = esg > 0 ? '+' : '';
+    html += `<div class="score-change-text" style="color:${c};animation-delay:0.2s">${sign}${esg} ESG ${esg > 0 ? '▲' : '▼'}</div>`;
+  }
+  el.innerHTML = html;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 1500);
+}
+
+// =========================================================
+// SECRETARY DIALOGUE HELPERS
+// =========================================================
+function secSay(messages, callback){
+  showDialogue(G.secName, G.secImg, messages, callback);
+}
+
+function rewriteAsSecretary(text){
+  // Rewrite narrative to be from secretary's perspective
+  const h = G.honorific;
+  return text;
+}
+
+function secOpeningForChapter(ch){
+  const h = G.honorific;
+  const openingText = ch.opening.replace(/\n/g, ' ');
+  
+  switch(ch.id){
+    case 'A':
+      return [
+        `${h}, I have the briefing on our latest acquisition ready for you.`,
+        `We've just completed the purchase of Rebel — a well-known food brand famous for its popular products and strong social activism.`,
+        `Rebel's founders believe business should drive social change. They speak publicly on political issues, support social justice campaigns, and have built a loyal customer base that buys their products partly because of these values.`,
+        `The founders agreed to sell only after we promised to protect Rebel's social mission. The price we paid includes a large premium for the brand's unique identity.`,
+        `Your first decisions will shape whether that promise means anything. I've prepared the details for you.`
+      ];
+    case 'B':
+      return [
+        `${h}, your scores carry forward from the Rebel acquisition. People are watching whether our treatment of Pure Skin matches how we handled Rebel.`,
+        `We've acquired Pure Skin — a premium skincare brand built on two promises: zero harmful chemicals and zero-waste packaging.`,
+        `Pure Skin was a pioneer in the 'clean beauty' movement. Its loyal customers pay higher prices specifically because of these promises.`,
+        `The acquisition was announced as proof that Titan is serious about sustainability across its entire business. I have the integration options ready for your review.`
+      ];
+    case 'C':
+      return [
+        `${h}, your scores carry forward. The market is now watching our pattern across multiple acquisitions.`,
+        `We've acquired Clean Home — a household cleaning brand built entirely on environmental activism.`,
+        `Clean Home's products are plant-based, its packaging is recycled, and its founding team has spent decades publicly campaigning for environmental laws, plastic reduction, and corporate accountability — including campaigns targeting companies very similar to Titan.`,
+        `Clean Home's customers are buying the brand's political identity. The founders agreed to sell only because they believed our ESG commitments were genuine. Shall I walk you through the first decision?`
+      ];
+    case 'D':
+      return [
+        `${h}, we are now managing four ESG brand acquisitions. Your pattern of decisions is becoming clear — or unclear.`,
+        `We've acquired Herb — a small but fast-growing organic herbal tea and wellness brand. Every product is 100% certified organic with multiple ethical certifications.`,
+        `The brand donates 1% of all sales to environmental causes and sources ingredients through fair trade programmes.`,
+        `Herb's founders agreed to sell because they believed our sustainability plan was genuine. The herbalist co-founder has agreed to stay on in an advisory role to protect the brand's values. I have the growth strategy options ready.`
+      ];
+    default:
+      return [openingText];
+  }
+}
+
+function secContextForDecision(ch, dec){
+  const h = G.honorific;
+  let ctx = dec.context || '';
+  if(dec.ctxByPrev){
+    const prev = G.history.filter(hh => hh.chId === ch.id);
+    const prevL = prev.length > 0 ? prev[prev.length-1].letter : 'A';
+    ctx = dec.ctxByPrev[prevL] || dec.ctxByPrev['A'];
+  }
+  return [`${h}, there's a situation developing.`, ctx, `I've prepared the options for your decision. What would you like to do?`];
+}
+
+function secConsequence(consText){
+  const h = G.honorific;
+  return [`${h}, the board has reviewed the outcome of your decision.`, consText];
+}
+
+// =========================================================
+// FLOW
+// =========================================================
+function showErr(id, msg){
+  const el = document.getElementById(id);
+  el.innerHTML = '⚠ ' + msg;
+  el.classList.add('visible');
+}
+function clearErr(id){
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  el.classList.remove('visible');
+}
+
+function checkPassword(){
+  const v = document.getElementById('pw-input').value.trim().toUpperCase();
+  if(v === 'MSAF7008'){
+    playClick();
+    clearErr('pw-err');
+    show('s-charselect');
+  } else {
+    showErr('pw-err', 'Incorrect access code. Try again.');
+  }
+}
+
+function validateBeginQuest(){
+  const name = document.getElementById('reg-name').value.trim();
+  const btn = document.getElementById('begin-quest-btn');
+  if(G.gender && name.length > 0){
+    btn.disabled = false;
+  } else {
+    btn.disabled = true;
+  }
+}
+
+function selectChar(gender){
+  G.gender = gender;
+  document.getElementById('char-male').classList.toggle('selected', gender === 'male');
+  document.getElementById('char-female').classList.toggle('selected', gender === 'female');
+  validateBeginQuest();
+  playClick();
+  
+  if(gender === 'male'){
+    G.ceoImg = 'images/male-ceo.png';
+    G.secName = 'Elena';
+    G.secImg = 'images/female-secretary.png';
+    G.honorific = 'Sir';
+  } else {
+    G.ceoImg = 'images/female-ceo.png';
+    G.secName = 'Marcus';
+    G.secImg = 'images/male-secretary.png';
+    G.honorific = 'Ma\'am';
+  }
+}
+
+function register(){
+  const n = document.getElementById('reg-name').value.trim();
+  if(!G.gender){
+    showErr('reg-err', 'Please select your CEO first.');
+    return;
+  }
+  if(!n){
+    showErr('reg-err', 'Please enter your name.');
+    return;
+  }
+  clearErr('reg-err');
+  G.name = n;
+  G.email = '';
+  playClick();
+  
+  // Show intro scores
+  renderIntroScores();
+  show('s-intro');
+}
+
+function renderIntroScores(){
+  const el = document.getElementById('intro-scores-hud');
+  const maxScore = 30;
+  const invPct = Math.min(100, Math.max(0, (G.inv / maxScore) * 100));
+  const esgPct = Math.min(100, Math.max(0, (G.esg / maxScore) * 100));
+  el.innerHTML = `
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:160px;">
+        <div style="font-size:8px;color:#94a3b8;margin-bottom:4px;display:flex;justify-content:space-between;">
+          <span>INVESTOR</span><span style="color:#3b82f6;">${G.inv}</span>
+        </div>
+        <div style="height:12px;background:#1e293b;border:2px solid #334155;">
+          <div style="height:100%;width:${invPct}%;background:linear-gradient(90deg,#1e40af,#3b82f6);transition:width 0.8s;"></div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:160px;">
+        <div style="font-size:8px;color:#94a3b8;margin-bottom:4px;display:flex;justify-content:space-between;">
+          <span>ESG</span><span style="color:#4ade80;">${G.esg}</span>
+        </div>
+        <div style="height:12px;background:#1e293b;border:2px solid #334155;">
+          <div style="height:100%;width:${esgPct}%;background:linear-gradient(90deg,#166534,#4ade80);transition:width 0.8s;"></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function startIntroDialogue(){
+  playClick();
+  const h = G.honorific;
+  secSay([
+    `Good morning, ${h}. I'm ${G.secName}, your personal secretary at Titan Corporation.`,
+    `Welcome to your new role as CEO, ${G.name}. You have quite the challenge ahead of you.`,
+    `Titan is a global consumer goods company that has been acquiring brands with strong environmental and social missions.`,
+    `You'll be making critical decisions about four acquired brands. Each decision affects two scores: Investor Confidence and ESG Credibility.`,
+    `Both scores start at 15. If either reaches zero... well, let's not think about that. The board will be watching closely.`,
+    `After each chapter, I'll reveal what the real company actually did in these situations. You may be surprised.`,
+    `Ready to begin, ${h}? Your first acquisition is waiting.`
+  ], () => {
+    startGame();
+  });
+}
+
+function startGame(){
+  G.chIdx = 0;
+  G.dIdx = 0;
+  beginChapter();
+}
+
+function beginChapter(){
+  const ch = CHAPTERS[G.chIdx];
+  
+  // Show decision screen with chapter image
+  show('s-decision');
+  updateHUD();
+  updateProgress();
+  
+  // Show chapter image
+  const imgEl = document.getElementById('ch-img');
+  imgEl.src = ch.img;
+  imgEl.style.display = 'block';
+  
+  // Hide decision menu until dialogue finishes
+  const menu = document.getElementById('decision-menu');
+  menu.classList.remove('active');
+  menu.innerHTML = '';
+  
+  // Secretary delivers chapter opening
+  const openingMessages = secOpeningForChapter(ch);
+  secSay(openingMessages, () => {
+    // After opening, show decision context then options
+    presentDecision();
+  });
+}
+
+function presentDecision(){
+  const ch = CHAPTERS[G.chIdx];
+  const dec = ch.decisions[G.dIdx];
+  
+  updateHUD();
+  updateProgress();
+  
+  // If not first decision, hide chapter image
+  if(G.dIdx > 0){
+    document.getElementById('ch-img').style.display = 'none';
+  }
+  
+  // Secretary delivers decision context
+  const ctxMessages = secContextForDecision(ch, dec);
+  secSay(ctxMessages, () => {
+    // Show options as RPG menu
+    renderOptions(dec);
+  });
+}
+
+function renderOptions(dec){
+  const menu = document.getElementById('decision-menu');
+
+  // Context card
+  let contextText = dec.context || '';
+  if(dec.ctxByPrev){
+    const ch = CHAPTERS[G.chIdx];
+    const prev = G.history.filter(hh => hh.chId === ch.id);
+    const prevL = prev.length > 0 ? prev[prev.length-1].letter : 'A';
+    contextText = dec.ctxByPrev[prevL] || dec.ctxByPrev['A'];
+  }
+  menu.innerHTML = `<div class="decision-menu-title">${dec.title}</div>` +
+    (contextText ? `<div class="decision-context-card">${contextText}</div>` : '');
+
+  dec.options.forEach(opt => {
+    const item = document.createElement('div');
+    item.className = 'opt-item pixel-border';
+    item.dataset.optKey = opt.l;
+    item.innerHTML = `<div class="opt-letter">${opt.l}</div><div class="opt-text">${opt.text}</div>`;
+    item.onclick = () => selectOpt(opt);
+    menu.appendChild(item);
+  });
+
+  menu.classList.add('active');
+  menu.scrollIntoView({behavior:'smooth', block:'start'});
+
+  // Store options for keyboard nav
+  window._currentOptMap = {};
+  dec.options.forEach(o => { window._currentOptMap[o.l] = o; });
+}
+
+// Keyboard A/B/C/D navigation for decision options
+document.addEventListener('keydown', function(kEvt){
+  const key = kEvt.key.toUpperCase();
+  if(!['A','B','C','D'].includes(key)) return;
+  if(!window._currentOptMap) return;
+  const modal = document.getElementById('confirm-modal');
+  if(modal && modal.classList.contains('open')) return;
+  const dialogue = document.getElementById('dialogue-overlay');
+  if(dialogue && dialogue.classList.contains('active')) return;
+  const menu = document.getElementById('decision-menu');
+  if(!menu || !menu.classList.contains('active')) return;
+  const opt = window._currentOptMap[key];
+  if(opt){
+    kEvt.preventDefault();
+    // Briefly highlight the item
+    const item = menu.querySelector('[data-opt-key="'+key+'"]');
+    if(item){ item.style.outline = '3px solid #d4a017'; setTimeout(()=>{ item.style.outline=''; },200); }
+    selectOpt(opt);
+  }
+});
+
+function selectOpt(opt){
+  playClick();
+  G.pending = opt;
+  G.showingCons = false;
+  document.getElementById('modal-phase-title').textContent = 'CONFIRM DECISION';
+  document.getElementById('modal-choice-text').innerHTML = `<strong>Option ${opt.l}:</strong> ${opt.text}`;
+  document.getElementById('modal-reason').value = '';
+  document.getElementById('modal-rationale-wrap').style.display = 'block';
+  document.getElementById('modal-consequence').style.display = 'none';
+  document.getElementById('modal-back-btn').style.display = '';
+  document.getElementById('modal-ok-btn').textContent = 'CONFIRM →';
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+function closeModal(){
+  if(G.showingCons) return;
+  document.getElementById('confirm-modal').classList.remove('open');
+}
+
+function confirmChoice(){
+  playClick();
+  if(G.showingCons){
+    document.getElementById('confirm-modal').classList.remove('open');
+    afterConsequence();
+    return;
+  }
+  const opt = G.pending;
+  const ch = CHAPTERS[G.chIdx];
+  const dec = ch.decisions[G.dIdx];
+  const reason = document.getElementById('modal-reason').value.trim();
+  G.history.push({chId:ch.id, brand:ch.brand, dIdx:G.dIdx, decTitle:dec.title, letter:opt.l, text:opt.text, inv:opt.inv, esg:opt.esg, real:dec.real, reason});
+  G.inv = Math.max(0, G.inv + opt.inv);
+  G.esg = Math.max(0, G.esg + opt.esg);
+  
+  G.showingCons = true;
+  document.getElementById('modal-rationale-wrap').style.display = 'none';
+  document.getElementById('modal-phase-title').textContent = 'CONSEQUENCE';
+  document.getElementById('modal-back-btn').style.display = 'none';
+  document.getElementById('modal-ok-btn').style.display = 'none';
+
+  // Phase 1: show loading indicator
+  const consEl = document.getElementById('modal-consequence');
+  consEl.style.display = 'block';
+  consEl.innerHTML = `<div id="modal-consequence-loading">ANALYSING OUTCOME</div>`;
+
+  // Phase 2 (after 1200ms): fade in consequence text
+  setTimeout(() => {
+    consEl.innerHTML = `
+      <div class="modal-cons-text" id="modal-cons-text" style="opacity:0;transition:opacity 0.6s ease;"></div>
+      <div class="modal-deltas" id="modal-deltas" style="opacity:0;transition:opacity 0.6s ease 0.3s;"></div>`;
+    document.getElementById('modal-cons-text').textContent = opt.cons;
+    // Trigger fade-in on next frame
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.getElementById('modal-cons-text').style.opacity = '1';
+        document.getElementById('modal-deltas').style.opacity = '1';
+        document.getElementById('modal-deltas').innerHTML = pill(opt.inv, 'Investor') + pill(opt.esg, 'ESG');
+      });
+    });
+
+    // Phase 3 (after another 1000ms): show button + score change
+    setTimeout(() => {
+      document.getElementById('modal-ok-btn').style.display = '';
+      document.getElementById('modal-ok-btn').textContent = isGameOver() ? 'SEE RESULT →' : 'CONTINUE →';
+      showScoreChange(opt.inv, opt.esg);
+      updateHUD();
+    }, 1000);
+  }, 1200);
+}
+
+function afterConsequence(){
+  if(isGameOver()){
+    playGameOver();
+    // Build game over scores
+    const goScores = document.getElementById('go-scores');
+    goScores.innerHTML = `
+      <div class="go-score-box pixel-border-blue">
+        <div class="go-score-label">INVESTOR</div>
+        <div class="go-score-val" style="color:${G.inv<=0?'#f87171':'#3b82f6'}">${G.inv}</div>
+      </div>
+      <div class="go-score-box pixel-border-green">
+        <div class="go-score-label">ESG</div>
+        <div class="go-score-val" style="color:${G.esg<=0?'#f87171':'#4ade80'}">${G.esg}</div>
+      </div>`;
+    document.getElementById('go-reason').textContent =
+      G.inv <= 0 && G.esg <= 0 ? 'Both your Investor Confidence and ESG Credibility have reached zero. The board has lost faith in you on all fronts.' :
+      G.inv <= 0 ? 'Your Investor Confidence has reached zero. Investors have lost faith in your ability to manage the company\'s financial interests.' :
+      'Your ESG Credibility has reached zero. The market no longer believes in Titan\'s environmental and social commitments.';
+
+    // Identify which decision caused the loss
+    const lastH = G.history[G.history.length - 1];
+    if(lastH){
+      const ch = CHAPTERS.find(c => c.id === lastH.chId);
+      document.getElementById('go-detail').textContent =
+        `Score dropped to zero after: ${lastH.decTitle} (Chapter ${lastH.chId}, Decision ${lastH.dIdx+1}).`;
+    }
+    // Show review button if there's history to show
+    if(G.history.length > 0){
+      document.getElementById('go-review-btn').style.display = '';
+    }
+    show('s-gameover');
+    return;
+  }
+  
+  const ch = CHAPTERS[G.chIdx];
+  G.dIdx++;
+  if(G.dIdx < ch.decisions.length){
+    // Next decision in same chapter — secretary introduces context
+    show('s-decision');
+    document.getElementById('ch-img').style.display = 'none';
+    const menu = document.getElementById('decision-menu');
+    menu.classList.remove('active');
+    menu.innerHTML = '';
+    updateHUD();
+    updateProgress();
+    presentDecision();
+  } else {
+    // Chapter complete — show outcome
+    playFanfare();
+    renderOutcome();
+    show('s-outcome');
+  }
+}
+
+function renderOutcome(){
+  const ch = CHAPTERS[G.chIdx];
+  updateHUD();
+
+  // Score delta summary for this chapter
+  const chHist = G.history.filter(h => h.chId === ch.id);
+  let totalInv = 0, totalEsg = 0;
+  chHist.forEach(h => { totalInv += h.inv; totalEsg += h.esg; });
+  const invSign = totalInv >= 0 ? '+' : '';
+  const esgSign = totalEsg >= 0 ? '+' : '';
+  const invColor = totalInv >= 0 ? '#4ade80' : '#f87171';
+  const esgColor = totalEsg >= 0 ? '#4ade80' : '#f87171';
+  document.getElementById('out-delta-summary').innerHTML = `
+    <div style="flex:1;min-width:120px;">
+      <div class="outcome-delta-label">INVESTOR THIS CHAPTER</div>
+      <div class="outcome-delta-val" style="color:${invColor}">${invSign}${totalInv}</div>
+    </div>
+    <div style="flex:1;min-width:120px;">
+      <div class="outcome-delta-label">ESG THIS CHAPTER</div>
+      <div class="outcome-delta-val" style="color:${esgColor}">${esgSign}${totalEsg}</div>
+    </div>
+    <div style="flex:1;min-width:120px;">
+      <div class="outcome-delta-label">INVESTOR TOTAL</div>
+      <div class="outcome-delta-val" style="color:#3b82f6">${G.inv}</div>
+    </div>
+    <div style="flex:1;min-width:120px;">
+      <div class="outcome-delta-label">ESG TOTAL</div>
+      <div class="outcome-delta-val" style="color:#4ade80">${G.esg}</div>
+    </div>`;
+
+  document.getElementById('out-what').innerHTML = `
+    <div class="outcome-title">WHAT REALLY HAPPENED</div>
+    <div class="outcome-text">${ch.outcome.what.replace(/\n/g,'<br><br>')}</div>`;
+
+  document.getElementById('out-reflect').innerHTML = `
+    <div class="outcome-title">QUESTIONS TO REFLECT ON</div>
+    ${ch.outcome.reflections.map(r => `<div class="reflection-item">${r}</div>`).join('')}`;
+
+  let tbl = `<div class="outcome-title">YOUR CHOICES VS REALITY</div>
+    <table class="cmp-table"><thead><tr><th>Decision</th><th>You</th><th>The Firm</th><th>Match?</th></tr></thead><tbody>`;
+  chHist.forEach(h => {
+    const match = h.letter === h.real;
+    tbl += `<tr><td>${h.decTitle}</td><td><strong style="color:#5ce0d8">${h.letter}</strong></td><td><strong style="color:#f0c040">${h.real}</strong></td><td class="${match?'tag-match':'tag-diff'}">${match?'YES':'NO'}</td></tr>`;
+  });
+  tbl += '</tbody></table>';
+  document.getElementById('out-compare').innerHTML = tbl;
+
+  const nextBtn = document.getElementById('out-next-btn');
+  if(G.chIdx >= CHAPTERS.length - 1){
+    nextBtn.textContent = 'SEE FINAL RESULTS →';
+  } else {
+    const next = CHAPTERS[G.chIdx + 1];
+    nextBtn.textContent = `CONTINUE TO ${next.brand.toUpperCase()} →`;
+  }
+}
+
+function nextChapter(){
+  playClick();
+  G.chIdx++;
+  G.dIdx = 0;
+  if(G.chIdx >= CHAPTERS.length){
+    renderFinal();
+    show('s-final');
+    submitResult();
+    loadLeaderboard();
+    loadDistribution();
+  } else {
+    show('s-decision');
+    beginChapter();
+  }
+}
+
+// =========================================================
+// FINAL SCREEN
+// =========================================================
+function renderFinal(){
+  playFanfare();
+  const prof = archetype();
+  
+  document.getElementById('final-archetype').innerHTML = `
+    <div style="font-size:10px;color:#5ce0d8;margin-bottom:12px;">YOUR CEO ARCHETYPE</div>
+    <div class="final-archetype-title">${prof.title}</div>
+    <div class="final-archetype-desc">${prof.desc}</div>`;
+  
+  // Final scores
+  const maxScore = 30;
+  const invPct = Math.min(100, Math.max(0, (G.inv / maxScore) * 100));
+  const esgPct = Math.min(100, Math.max(0, (G.esg / maxScore) * 100));
+  document.getElementById('final-scores-hud').innerHTML = `
+    <div class="hud-inner pixel-border" style="position:static;">
+      <div class="hud-bar-group">
+        <div class="hud-bar-label"><span>INVESTOR CONFIDENCE</span><span class="hud-bar-value">${G.inv}</span></div>
+        <div class="hud-bar-track"><div class="hud-bar-fill inv" style="width:${invPct}%"></div></div>
+      </div>
+      <div class="hud-bar-group">
+        <div class="hud-bar-label"><span>ESG CREDIBILITY</span><span class="hud-bar-value">${G.esg}</span></div>
+        <div class="hud-bar-track"><div class="hud-bar-fill esg" style="width:${esgPct}%"></div></div>
+      </div>
+    </div>`;
+  
+  // Timeline
+  let tl = '';
+  G.history.forEach(h => {
+    const match = h.letter === h.real;
+    tl += `<div class="tl-item pixel-border" style="border-width:2px;">
+      <div class="tl-dot" style="background:${match?'#4ade80':'#f87171'};"></div>
+      <div class="tl-body">
+        <div class="tl-brand">Brand ${h.chId}: ${h.brand} — ${h.decTitle}</div>
+        <div class="tl-choice">You chose <strong style="color:#5ce0d8">${h.letter}</strong>: ${h.text.split('—')[0].trim()}</div>
+        ${h.reason ? `<div class="tl-reason">"${h.reason}"</div>` : ''}
+        <div class="tl-real">${pill(h.inv,'Investor')} ${pill(h.esg,'ESG')} &nbsp; Real: <strong style="color:#f0c040">${h.real}</strong> — ${match?'<span style="color:#4ade80">Matched</span>':'<span style="color:#f87171">Differed</span>'}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('tp-timeline').innerHTML = tl;
+  
+  // Reveals
+  let rev = '';
+  CHAPTERS.forEach(ch => {
+    rev += `<div class="reveal-card pixel-border" style="border-width:2px;">
+      <div class="reveal-brand">Brand ${ch.id}: ${ch.brand}</div>
+      <div class="reveal-real">${ch.realCompany}</div>
+    </div>`;
+  });
+  document.getElementById('tp-reveals').innerHTML = rev;
+}
+
+// =========================================================
+// GAME OVER REVIEW
+// =========================================================
+function showGameOverReview(){
+  // Build a minimal final screen showing only journey tab
+  playClick();
+  renderFinal();
+  // Patch the final-archetype to show "Game Over" context
+  document.getElementById('final-archetype').innerHTML = `
+    <div style="font-size:10px;color:#f87171;margin-bottom:12px;">GAME OVER — PARTIAL JOURNEY</div>
+    <div class="final-archetype-title" style="color:#f87171;">Review Your Choices</div>
+    <div class="final-archetype-desc">You didn't complete the full game, but here are the decisions you made before the end.</div>`;
+  show('s-final');
+  // Hide leaderboard/distribution tabs (data incomplete)
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if(b.textContent.includes('LEADERBOARD') || b.textContent.includes('CLASS DATA')){
+      b.style.opacity = '0.4';
+      b.style.pointerEvents = 'none';
+    }
+  });
+}
+
+// =========================================================
+// TABS
+// =========================================================
+function switchTab(id, btn){
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  playClick();
+}
+
+// =========================================================
+// API CALLS
+// =========================================================
+function submitResult(){
+  const prof = archetype();
+  const choices = {};
+  const reasons = {};
+  G.history.forEach(h => {
+    const k = h.chId + (h.dIdx + 1);
+    choices[k] = h.letter;
+    if(h.reason) reasons[k] = h.reason;
+  });
+  api({action:'submit', name:G.name, email:G.email, inv:G.inv, esg:G.esg, archetype:prof.title, choices, reasons});
+}
+
+function loadLeaderboard(){
+  document.getElementById('lb-content').innerHTML = '<div style="color:#64748b;font-size:10px;text-align:center;padding:12px;">LOADING...</div>';
+  apiGet('getLeaderboard').then(res => {
+    if(!res.ok || !res.leaderboard){
+      document.getElementById('lb-content').innerHTML = `
+        <div class="api-error-box">
+          ⚠ Could not load leaderboard data.<br>
+          <button class="pixel-btn pixel-btn-small pixel-btn-red" onclick="loadLeaderboard()" style="margin-top:10px;">↻ RETRY</button>
+        </div>`;
+      return;
+    }
+    const lb = res.leaderboard;
+    if(lb.length === 0){
+      document.getElementById('lb-content').innerHTML = '<div style="color:#94a3b8;">No results yet. Be the first!</div>';
+      return;
+    }
+    const medals = ['1ST','2ND','3RD'];
+    let html = `<table class="lb-table"><thead><tr><th>#</th><th>Name</th><th>INV</th><th>ESG</th><th>AVG</th><th>Type</th></tr></thead><tbody>`;
+    lb.forEach((r, i) => {
+      const isMe = r.name === G.name;
+      html += `<tr class="${isMe?'me':''}">
+        <td style="color:#d4a017;">${medals[i]||r.rank}</td>
+        <td><strong>${r.name}</strong>${isMe?' <span style="color:#4ade80;font-size:7px;">(YOU)</span>':''}</td>
+        <td><span class="pill-inv">${r.inv}</span></td>
+        <td><span class="pill-esg">${r.esg}</span></td>
+        <td><span class="pill-score">${r.score}</span></td>
+        <td style="font-size:7px;color:#94a3b8;">${r.archetype}</td>
+      </tr>`;
+    });
+    html += `</tbody></table><div style="color:#475569;font-size:8px;margin-top:10px;">${res.total} student${res.total!==1?'s':''} completed</div>`;
+    document.getElementById('lb-content').innerHTML = html;
+  });
+}
+
+function loadDistribution(){
+  document.getElementById('dist-content').innerHTML = '<div style="color:#64748b;font-size:10px;text-align:center;padding:12px;">LOADING...</div>';
+  apiGet('getDistribution').then(res => {
+    if(!res.ok || !res.dist){
+      document.getElementById('dist-content').innerHTML = `
+        <div class="api-error-box">
+          ⚠ Could not load class distribution data.<br>
+          <button class="pixel-btn pixel-btn-small pixel-btn-red" onclick="loadDistribution()" style="margin-top:10px;">↻ RETRY</button>
+        </div>`;
+      return;
+    }
+    const dist = res.dist;
+    const total = res.total || 0;
+    if(total === 0){
+      document.getElementById('dist-content').innerHTML = '<div style="color:#94a3b8;">No class data yet.</div>';
+      return;
+    }
+    
+    const decLabels = {
+      A1:'A1 — Rebel: Governance',
+      A2:'A2 — Rebel: Activism Crisis',
+      B1:'B1 — Pure Skin: Integration',
+      B2:'B2 — Pure Skin: Portfolio',
+      C1:'C1 — Clean Home: Voice',
+      C2:'C2 — Clean Home: Plastic',
+      D1:'D1 — Herb: Growth',
+      D2:'D2 — Herb: Ownership',
+    };
+    const realChoices = {A1:'A',A2:'C',B1:'B',B2:'D',C1:'B',C2:'C',D1:'A',D2:'C'};
+    
+    const myChoices = {};
+    G.history.forEach(h => { myChoices[h.chId+(h.dIdx+1)] = h.letter; });
+    
+    let html = '';
+    Object.keys(decLabels).forEach(key => {
+      const d = dist[key] || {};
+      const decTotal = Object.values(d).reduce((a,b) => a+b, 0);
+      const real = realChoices[key];
+      const mine = myChoices[key];
+      const letters = Object.keys(d).sort();
+      
+      html += `<div style="margin-bottom:20px;">
+        <div class="dist-title">${decLabels[key]}</div>`;
+      letters.forEach(l => {
+        const count = d[l] || 0;
+        const pct = decTotal > 0 ? Math.round(count/decTotal*100) : 0;
+        const isReal = l === real;
+        const isMine = l === mine;
+        html += `<div class="bar-row">
+          <div class="bar-label">${l}</div>
+          <div class="bar-track"><div class="bar-fill${isReal?' real':isMine?' you':''}" style="width:${pct}%"></div></div>
+          <div class="bar-pct">${pct}%</div>
+          <div class="bar-badges">
+            ${isMine?'<span class="badge badge-you">You</span>':''}
+            ${isReal?'<span class="badge badge-real">Real</span>':''}
+          </div>
+        </div>`;
+      });
+      html += '</div>';
+    });
+    html += `<div style="color:#475569;font-size:8px;margin-top:8px;">Based on ${total} game${total!==1?'s':''}. <span style="color:#4ade80;">■ You</span> &nbsp; <span style="color:#f59e0b;">■ Unilever</span></div>`;
+    document.getElementById('dist-content').innerHTML = html;
+  });
+}
+
+// =========================================================
+// EXPORT
+// =========================================================
+function exportSummary(){
+  playClick();
+  const prof = archetype();
+  const date = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  
+  let decisionsHtml = '';
+  G.history.forEach(h => {
+    const match = h.letter === h.real;
+    decisionsHtml += `
+      <div class="ex-decision">
+        <div class="ex-dec-title">${h.decTitle}</div>
+        <table class="ex-table">
+          <tr><td class="ex-label">Your choice</td><td><strong>${h.letter}</strong> — ${h.text.split('—')[0].trim()}</td></tr>
+          ${h.reason ? `<tr><td class="ex-label">Your reasoning</td><td class="ex-reason">${h.reason}</td></tr>` : ''}
+          <tr><td class="ex-label">Unilever's choice</td><td><strong>${h.real}</strong> ${match ? '<span class="ex-match">✓ You matched</span>' : '<span class="ex-diff">✗ You differed</span>'}</td></tr>
+          <tr><td class="ex-label">Score impact</td><td>Investor: ${h.inv > 0 ? '+' : ''}${h.inv} &nbsp; ESG: ${h.esg > 0 ? '+' : ''}${h.esg}</td></tr>
+        </table>
+      </div>`;
+  });
+  
+  let revealsHtml = '';
+  CHAPTERS.forEach(ch => {
+    revealsHtml += `
+      <div class="ex-reveal">
+        <div class="ex-reveal-brand">Brand ${ch.id}: ${ch.brand}</div>
+        <div class="ex-reveal-real">${ch.realCompany}</div>
+        <div class="ex-reveal-story">${ch.outcome.what.replace(/\n/g,'<br>')}</div>
+      </div>`;
+  });
+  
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Titan Challenge — ${G.name} — Summary</title>
+<style>
+  body{font-family:'Segoe UI',Arial,sans-serif;max-width:800px;margin:0 auto;padding:32px 24px;color:#1e293b;line-height:1.6;}
+  h1{font-size:1.8rem;color:#1e3a5f;margin-bottom:4px;}
+  .meta{color:#64748b;font-size:.9rem;margin-bottom:28px;}
+  .section-title{font-size:1.1rem;font-weight:700;color:#1e3a5f;border-bottom:2px solid #e2e8f0;padding-bottom:6px;margin:28px 0 16px;}
+  .ceo-box{background:#f8fafc;border-radius:10px;padding:18px 22px;border-left:4px solid #f59e0b;margin-bottom:8px;}
+  .ceo-type{font-size:1.3rem;font-weight:700;color:#b45309;}
+  .ceo-desc{color:#475569;font-size:.93rem;margin-top:6px;}
+  .scores{display:flex;gap:16px;margin-bottom:28px;}
+  .score-box{padding:12px 20px;border-radius:8px;text-align:center;flex:1;}
+  .score-box.inv{background:#eff6ff;border:1px solid #bfdbfe;}
+  .score-box.esg{background:#f0fdf4;border:1px solid #bbf7d0;}
+  .score-box .val{font-size:1.8rem;font-weight:700;}
+  .score-box .lbl{font-size:.75rem;color:#64748b;text-transform:uppercase;letter-spacing:.06em;}
+  .inv .val{color:#1d4ed8;} .esg .val{color:#15803d;}
+  .ex-decision{border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin-bottom:14px;}
+  .ex-dec-title{font-weight:700;color:#1e3a5f;margin-bottom:10px;font-size:.97rem;}
+  .ex-table{width:100%;border-collapse:collapse;font-size:.9rem;}
+  .ex-table tr td{padding:5px 8px;vertical-align:top;}
+  .ex-label{color:#64748b;width:140px;font-size:.82rem;padding-top:6px;}
+  .ex-reason{color:#334155;font-style:italic;}
+  .ex-match{color:#15803d;font-weight:600;margin-left:6px;}
+  .ex-diff{color:#b91c1c;font-weight:600;margin-left:6px;}
+  .ex-reveal{border-left:3px solid #f59e0b;padding:12px 16px;margin-bottom:14px;background:#fffbeb;border-radius:0 8px 8px 0;}
+  .ex-reveal-brand{font-weight:700;color:#1e3a5f;margin-bottom:4px;}
+  .ex-reveal-real{color:#b45309;font-size:.9rem;margin-bottom:8px;}
+  .ex-reveal-story{color:#475569;font-size:.88rem;line-height:1.65;}
+  .footer{margin-top:40px;padding-top:16px;border-top:1px solid #e2e8f0;color:#94a3b8;font-size:.8rem;text-align:center;}
+  @media print{body{padding:16px;} .no-print{display:none;}}
+<\/style>
+<\/head>
+<body>
+  <h1>Titan Challenge — Personal Summary</h1>
+  <div class="meta">${G.name} &nbsp;·&nbsp; ${date}</div>
+  <div class="section-title">Your CEO Archetype</div>
+  <div class="ceo-box">
+    <div class="ceo-type">${prof.title}</div>
+    <div class="ceo-desc">${prof.desc}</div>
+  </div>
+  <div class="section-title">Final Scores</div>
+  <div class="scores">
+    <div class="score-box inv"><div class="lbl">Investor Confidence</div><div class="val">${G.inv}</div></div>
+    <div class="score-box esg"><div class="lbl">ESG Credibility</div><div class="val">${G.esg}</div></div>
+  </div>
+  <div class="section-title">Your Decisions &amp; Reasoning</div>
+  ${decisionsHtml}
+  <div class="section-title">The Real Companies — What Actually Happened</div>
+  ${revealsHtml}
+  <div class="footer">Titan Challenge &nbsp;·&nbsp; Copyright © Shipeng Yan &nbsp;·&nbsp; Generated ${date}</div>
+  <div class="no-print" style="margin-top:24px;text-align:center;">
+    <button onclick="window.print()" style="padding:10px 28px;background:#1e56b0;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer;">Print / Save as PDF</button>
+  </div>
+<\/body>
+<\/html>`;
+  
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Titan-Challenge-${G.name.replace(/\s+/g,'-')}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+<script data-pplx-inline-edit>
+(function(){
+  if(window===window.top)return;
+  function inlineAll(orig,clone){
+    if(orig.nodeType!==1)return;
+    try{
+      var cs=getComputedStyle(orig);
+      var t='';
+      for(var i=0;i<cs.length;i++){t+=cs[i]+':'+cs.getPropertyValue(cs[i])+';';}
+      clone.style.cssText=t;
+    }catch(e){}
+    var oc=orig.children,cc=clone.children;
+    for(var j=0;j<oc.length&&j<cc.length;j++){inlineAll(oc[j],cc[j]);}
+  }
+  function stripExternal(clone){
+    var imgs=clone.querySelectorAll('img');
+    for(var i=0;i<imgs.length;i++){
+      var s=imgs[i].getAttribute('src');
+      if(s&&!s.startsWith('data:'))imgs[i].removeAttribute('src');
+    }
+    var all=clone.querySelectorAll('*');
+    for(var i=0;i<all.length;i++){
+      var st=all[i].style.cssText;
+      if(st&&st.indexOf('url(')>=0){
+        all[i].style.cssText=st.replace(/url\(["']?(?!data:)[^)"']*["']?\)/gi,'none');
+      }
+    }
+  }
+  window.addEventListener('message',function(e){
+    if(!e.data||e.data.type!=='INLINE_EDIT_CAPTURE_REQUEST')return;
+    var scrollX=window.scrollX||window.pageXOffset||0;
+    var scrollY=window.scrollY||window.pageYOffset||0;
+    var w=window.innerWidth,h=window.innerHeight;
+    try{
+      var clone=document.documentElement.cloneNode(true);
+      var rm=clone.querySelectorAll('script,link[rel="stylesheet"],style');
+      for(var i=0;i<rm.length;i++){rm[i].remove();}
+      inlineAll(document.documentElement,clone);
+      stripExternal(clone);
+      var html=new XMLSerializer().serializeToString(clone);
+      var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">'
+        +'<foreignObject width="100%" height="100%">'
+        +'<div xmlns="http://www.w3.org/1999/xhtml" style="width:'+w+'px;height:'+h+'px;overflow:hidden">'
+        +'<div style="transform:translate(-'+scrollX+'px,-'+scrollY+'px);transform-origin:top left">'
+        +html+'</div></div></foreignObject></svg>';
+      var svgUrl='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+      var img=new Image();
+      img.onload=function(){
+        var c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0);
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:c.toDataURL('image/png'),scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.onerror=function(){
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.src=svgUrl;
+    }catch(err){
+      window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+    }
+  });
+})();
+</script></body>
+</html>
+
+
