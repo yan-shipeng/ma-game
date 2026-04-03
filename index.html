@@ -1104,11 +1104,258 @@ body::after{
   margin:8px 0;
 }
 .api-error-box button{margin-top:10px;}
+
+/* ============================================================= */
+/* THEME TOGGLE BUTTON                                            */
+/* ============================================================= */
+#theme-toggle-btn{
+  position:fixed;
+  top:12px;
+  right:16px;
+  z-index:10000;
+  font-family:'Press Start 2P',monospace;
+  font-size:8px;
+  padding:8px 12px;
+  cursor:pointer;
+  border:2px solid #d4a017;
+  background:#1a1a2e;
+  color:#d4a017;
+  transition:all 0.2s;
+  letter-spacing:1px;
+  white-space:nowrap;
+}
+#theme-toggle-btn:hover{
+  background:#d4a017;
+  color:#0c0e1a;
+  box-shadow:0 0 16px rgba(212,160,23,0.5);
+}
+
+/* ============================================================= */
+/* HOK THEME — body.theme-hok overrides                          */
+/* ============================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+
+body.theme-hok{
+  background: linear-gradient(160deg, #0a0518 0%, #12062e 40%, #1a0a3a 70%, #0d1a3a 100%);
+  font-family: 'Noto Serif SC', serif;
+}
+body.theme-hok::after{
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(120,60,220,0.04) 3px,
+    rgba(120,60,220,0.04) 6px
+  );
+}
+/* Animated dragon-cloud background */
+body.theme-hok::before{
+  content:'';
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(ellipse 80% 40% at 20% 80%, rgba(180,60,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 30% at 80% 20%, rgba(255,160,30,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(30,80,200,0.06) 0%, transparent 80%);
+}
+/* Screens */
+body.theme-hok .screen{
+  position:relative;
+  z-index:1;
+}
+/* Pixel borders → ornate gold borders */
+body.theme-hok .pixel-border{
+  border:3px solid #c8960a;
+  box-shadow:
+    0 0 0 1px #7a5500,
+    0 0 12px rgba(200,150,10,0.35),
+    inset 0 0 0 1px rgba(255,210,80,0.15);
+}
+body.theme-hok .pixel-border-blue{
+  border:3px solid #7c3aed;
+  box-shadow:0 0 12px rgba(124,58,237,0.4), inset 0 0 0 1px rgba(180,130,255,0.15);
+}
+body.theme-hok .pixel-border-green{
+  border:3px solid #10b981;
+  box-shadow:0 0 12px rgba(16,185,129,0.4), inset 0 0 0 1px rgba(100,255,180,0.15);
+}
+body.theme-hok .pixel-border-red{
+  border:3px solid #ef4444;
+  box-shadow:0 0 12px rgba(239,68,68,0.4), inset 0 0 0 1px rgba(255,130,130,0.15);
+}
+/* Buttons */
+body.theme-hok .pixel-btn{
+  font-family:'Noto Serif SC',serif;
+  background:linear-gradient(135deg,#1e0a40,#2d1060);
+  color:#f0c040;
+  border:2px solid #c8960a;
+  box-shadow:0 0 10px rgba(200,150,10,0.3);
+  border-radius:2px;
+  letter-spacing:1px;
+}
+body.theme-hok .pixel-btn:hover{
+  background:linear-gradient(135deg,#c8960a,#f0c040);
+  color:#0a0518;
+  box-shadow:0 0 24px rgba(240,192,64,0.6);
+}
+body.theme-hok .pixel-btn-red{
+  color:#ff8080;
+  border-color:#ef4444;
+}
+body.theme-hok .pixel-btn-cyan{
+  color:#a78bfa;
+  border-color:#7c3aed;
+}
+body.theme-hok .pixel-btn-green{
+  color:#6ee7b7;
+  border-color:#10b981;
+}
+/* HUD */
+body.theme-hok .hud{
+  background:transparent;
+}
+body.theme-hok .hud-inner{
+  background:linear-gradient(90deg,rgba(20,5,50,0.95),rgba(30,10,70,0.95));
+  border:1px solid rgba(200,150,10,0.4);
+  box-shadow:0 2px 20px rgba(120,60,220,0.2);
+}
+body.theme-hok .hud-bar-fill.inv{background:linear-gradient(90deg,#4c1d95,#7c3aed);}
+body.theme-hok .hud-bar-fill.esg{background:linear-gradient(90deg,#064e3b,#10b981);}
+body.theme-hok .hud-progress{color:#f0c040;}
+body.theme-hok .hud-ch-dot.done{background:#c8960a;border-color:#c8960a;}
+body.theme-hok .hud-ch-dot.active{background:#a78bfa;border-color:#7c3aed;box-shadow:0 0 8px rgba(124,58,237,0.6);}
+/* Dialogue box */
+body.theme-hok .dialogue-box{
+  background:linear-gradient(135deg,rgba(15,6,40,0.97),rgba(25,10,60,0.97));
+  border:2px solid #c8960a;
+  box-shadow:0 -4px 30px rgba(120,60,220,0.25);
+}
+body.theme-hok .dialogue-box.speaker-ceo{
+  border-color:#c8960a !important;
+  box-shadow:0 -4px 30px rgba(200,150,10,0.2) !important;
+}
+body.theme-hok .dialogue-box.speaker-sec{
+  border-color:#7c3aed !important;
+  box-shadow:0 -4px 30px rgba(124,58,237,0.2) !important;
+}
+body.theme-hok .dialogue-name{color:#f0c040;}
+body.theme-hok .dialogue-portrait{border:2px solid #c8960a;border-radius:4px;}
+body.theme-hok .dialogue-advance{color:#f0c040;}
+/* Decision menu */
+body.theme-hok .opt-item{
+  background:linear-gradient(135deg,rgba(20,5,50,0.9),rgba(30,10,70,0.9));
+  border:1px solid rgba(200,150,10,0.3);
+}
+body.theme-hok .opt-item:hover{
+  background:linear-gradient(135deg,rgba(40,15,80,0.95),rgba(60,20,120,0.95));
+  border-color:#f0c040 !important;
+  box-shadow:0 0 20px rgba(200,150,10,0.2);
+}
+body.theme-hok .opt-letter{
+  border-color:#c8960a;
+  color:#f0c040;
+}
+body.theme-hok .opt-item:hover .opt-letter{
+  background:#c8960a;
+  color:#0a0518;
+}
+body.theme-hok .decision-menu-title{color:#a78bfa;}
+/* Modal */
+body.theme-hok .modal-overlay{
+  background:rgba(5,2,20,0.92);
+}
+body.theme-hok .modal-box{
+  background:linear-gradient(160deg,#0f0628,#1a0a3a);
+  border:2px solid #c8960a;
+  box-shadow:0 0 40px rgba(120,60,220,0.3);
+}
+body.theme-hok .modal-title{color:#f0c040;}
+body.theme-hok .modal-choice{
+  border-left:3px solid #c8960a;
+  background:rgba(200,150,10,0.06);
+}
+body.theme-hok .modal-cons-text{
+  border-left:3px solid #7c3aed;
+}
+/* Title screen */
+body.theme-hok .title-name{
+  color:#f0c040;
+  text-shadow:0 0 20px rgba(240,192,64,0.5),0 0 40px rgba(200,150,10,0.3);
+  font-family:'Noto Serif SC',serif;
+}
+body.theme-hok .title-subtitle{color:#a78bfa;}
+/* Char cards */
+body.theme-hok .char-card{
+  background:linear-gradient(160deg,#0f0628,#1a0a3a);
+}
+body.theme-hok .char-card:hover{
+  box-shadow:0 0 30px rgba(200,150,10,0.3);
+}
+body.theme-hok .char-label{color:#f0c040;}
+body.theme-hok .char-portrait{border:2px solid #c8960a;border-radius:4px;}
+/* Outcome & final screens */
+body.theme-hok .outcome-section,
+body.theme-hok .reveal-card,
+body.theme-hok .tl-item{
+  background:linear-gradient(135deg,rgba(15,6,40,0.95),rgba(25,10,60,0.95));
+  border-left:3px solid #c8960a;
+}
+body.theme-hok .outcome-title,
+body.theme-hok .reveal-brand,
+body.theme-hok .tl-brand{color:#f0c040;}
+body.theme-hok .tab-btn{
+  background:rgba(20,5,50,0.8);
+  border-color:rgba(200,150,10,0.4);
+  color:#a78bfa;
+}
+body.theme-hok .tab-btn.active,
+body.theme-hok .tab-btn:hover{
+  color:#f0c040;
+  border-color:#c8960a;
+  background:rgba(40,15,80,0.9);
+}
+body.theme-hok .final-archetype{
+  background:linear-gradient(135deg,rgba(15,6,40,0.95),rgba(25,10,60,0.95));
+  border:1px solid rgba(200,150,10,0.4);
+}
+body.theme-hok .final-archetype-title{color:#f0c040;}
+/* Game over */
+body.theme-hok .gameover-title{
+  color:#a78bfa;
+  text-shadow:0 0 30px rgba(167,139,250,0.6);
+}
+body.theme-hok .gameover-reason{color:#c4b5fd;}
+/* Input */
+body.theme-hok .pixel-input{
+  background:#0f0628;
+  border-color:#c8960a;
+  color:#f0c040;
+  font-family:'Noto Serif SC',serif;
+}
+body.theme-hok .name-label{color:#a78bfa;}
+/* Toggle button in HoK mode */
+body.theme-hok #theme-toggle-btn{
+  border-color:#c8960a;
+  background:linear-gradient(135deg,#1e0a40,#2d1060);
+  color:#f0c040;
+  box-shadow:0 0 10px rgba(200,150,10,0.3);
+}
+body.theme-hok #theme-toggle-btn:hover{
+  background:linear-gradient(135deg,#c8960a,#f0c040);
+  color:#0a0518;
+}
+/* Portrait swap: in HoK mode use hok-* images */
+body.theme-hok #char-male img.char-portrait{ content:url('images/hok-male-ceo.png'); }
+body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ceo.png'); }
+
 </style>
 </head>
 <body>
 
-
+<!-- Theme toggle button -->
+<button id="theme-toggle-btn" onclick="toggleTheme()" title="Switch UI Theme">🎮 HoK THEME</button>
 
 <!-- ============================================================= -->
 <!-- SCREEN: ACCESS CODE                                           -->
@@ -2597,6 +2844,77 @@ function exportSummary(){
   a.click();
   URL.revokeObjectURL(url);
 }
+
+/* ============================================================= */
+/* THEME TOGGLE                                                   */
+/* ============================================================= */
+(function(){
+  // Portrait maps: default vs HoK
+  const PORTRAITS = {
+    default: {
+      'male-ceo':        'images/male-ceo.png',
+      'female-ceo':      'images/female-ceo.png',
+      'male-secretary':  'images/male-secretary.png',
+      'female-secretary':'images/female-secretary.png'
+    },
+    hok: {
+      'male-ceo':        'images/hok-male-ceo.png',
+      'female-ceo':      'images/hok-female-ceo.png',
+      'male-secretary':  'images/hok-male-secretary.png',
+      'female-secretary':'images/hok-female-secretary.png'
+    }
+  };
+
+  function applyPortraits(theme){
+    const map = PORTRAITS[theme];
+    // Char-select cards
+    const maleCard = document.querySelector('#char-male img.char-portrait');
+    const femaleCard = document.querySelector('#char-female img.char-portrait');
+    if(maleCard)   maleCard.src   = map['male-ceo'];
+    if(femaleCard) femaleCard.src = map['female-ceo'];
+    // Live dialogue portrait
+    const dp = document.getElementById('dialogue-portrait');
+    if(dp && dp.src){
+      const src = dp.src;
+      if(src.includes('ceo')){
+        const key = src.includes('female') ? 'female-ceo' : 'male-ceo';
+        dp.src = map[key];
+      } else if(src.includes('secretary')){
+        const key = src.includes('female') ? 'female-secretary' : 'male-secretary';
+        dp.src = map[key];
+      }
+    }
+    // Update G.ceoImg and G.secImg so future dialogues use correct portrait
+    if(typeof G !== 'undefined'){
+      if(G.ceoImg){
+        const ceoKey = G.ceoImg.includes('female') ? 'female-ceo' : 'male-ceo';
+        G.ceoImg = map[ceoKey];
+      }
+      if(G.secImg){
+        const secKey = G.secImg.includes('female') ? 'female-secretary' : 'male-secretary';
+        G.secImg = map[secKey];
+      }
+    }
+  }
+
+  window.toggleTheme = function(){
+    const btn = document.getElementById('theme-toggle-btn');
+    const isHok = document.body.classList.toggle('theme-hok');
+    btn.textContent = isHok ? '\u2728 CLASSIC' : '\uD83C\uDFAE HoK THEME';
+    applyPortraits(isHok ? 'hok' : 'default');
+    localStorage.setItem('ma-game-theme', isHok ? 'hok' : 'default');
+  };
+
+  // Restore saved theme on load
+  document.addEventListener('DOMContentLoaded', function(){
+    const saved = localStorage.getItem('ma-game-theme');
+    if(saved === 'hok'){
+      document.body.classList.add('theme-hok');
+      document.getElementById('theme-toggle-btn').textContent = '\u2728 CLASSIC';
+      applyPortraits('hok');
+    }
+  });
+})();
 </script>
 <script data-pplx-inline-edit>
 (function(){
