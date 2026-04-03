@@ -1253,8 +1253,7 @@ body::after{
   <div class="gameover-scores" id="go-scores"></div>
   <div class="gameover-detail" id="go-detail"></div>
   <div class="gameover-actions">
-    <button class="pixel-btn pixel-btn-red" onclick="location.reload()">TRY AGAIN</button>
-    <button class="pixel-btn" id="go-review-btn" onclick="showGameOverReview()" style="display:none;">VIEW MY CHOICES</button>
+    <button class="pixel-btn pixel-btn-red" onclick="location.reload()">RESTART</button>
   </div>
 </div>
 
@@ -2180,10 +2179,6 @@ function afterConsequence(){
       const ch = CHAPTERS.find(c => c.id === lastH.chId);
       document.getElementById('go-detail').textContent =
         `Score dropped to zero after: ${lastH.decTitle} (Chapter ${lastH.chId}, Decision ${lastH.dIdx+1}).`;
-    }
-    // Show review button if there's history to show
-    if(G.history.length > 0){
-      document.getElementById('go-review-btn').style.display = '';
     }
     show('s-gameover');
     return;
