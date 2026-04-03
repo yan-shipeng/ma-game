@@ -2170,15 +2170,17 @@ function selectChar(gender){
   validateBeginQuest();
   playClick();
   
+  const isHok = document.body.classList.contains('theme-hok');
+  const pfx = isHok ? 'images/hok-' : 'images/';
   if(gender === 'male'){
-    G.ceoImg = 'images/male-ceo.png';
+    G.ceoImg = pfx + 'male-ceo.png';
     G.secName = 'Elena';
-    G.secImg = 'images/female-secretary.png';
+    G.secImg = pfx + 'female-secretary.png';
     G.honorific = 'Sir';
   } else {
-    G.ceoImg = 'images/female-ceo.png';
+    G.ceoImg = pfx + 'female-ceo.png';
     G.secName = 'Marcus';
-    G.secImg = 'images/male-secretary.png';
+    G.secImg = pfx + 'male-secretary.png';
     G.honorific = 'Ma\'am';
   }
 }
@@ -2874,8 +2876,8 @@ function exportSummary(){
     if(femaleCard) femaleCard.src = map['female-ceo'];
     // Live dialogue portrait
     const dp = document.getElementById('dialogue-portrait');
-    if(dp && dp.src){
-      const src = dp.src;
+    if(dp && dp.src && dp.src !== window.location.href){
+      const src = dp.getAttribute('src') || '';
       if(src.includes('ceo')){
         const key = src.includes('female') ? 'female-ceo' : 'male-ceo';
         dp.src = map[key];
@@ -2884,8 +2886,18 @@ function exportSummary(){
         dp.src = map[key];
       }
     }
-    // Update G.ceoImg and G.secImg so future dialogues use correct portrait
-    if(typeof G !== 'undefined'){
+    // Always update G.ceoImg and G.secImg based on selected gender
+    if(typeof G !== 'undefined' && G.gender){
+      const pfx = theme === 'hok' ? 'images/hok-' : 'images/';
+      if(G.gender === 'male'){
+        G.ceoImg = pfx + 'male-ceo.png';
+        G.secImg = pfx + 'female-secretary.png';
+      } else {
+        G.ceoImg = pfx + 'female-ceo.png';
+        G.secImg = pfx + 'male-secretary.png';
+      }
+    } else if(typeof G !== 'undefined'){
+      // Fallback: update from existing paths if gender not set yet
       if(G.ceoImg){
         const ceoKey = G.ceoImg.includes('female') ? 'female-ceo' : 'male-ceo';
         G.ceoImg = map[ceoKey];
