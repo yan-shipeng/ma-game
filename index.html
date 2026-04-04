@@ -1429,7 +1429,7 @@ body::after{
 }
 .cs-score-label{
   font-family:'Press Start 2P',monospace;
-  font-size:7px;
+  font-size:11px;
   color:#94a3b8;
   letter-spacing:1px;
 }
@@ -1441,7 +1441,7 @@ body::after{
 }
 .cs-score-total{
   font-family:'Press Start 2P',monospace;
-  font-size:6px;
+  font-size:10px;
   color:#64748b;
   letter-spacing:1px;
   text-align:center;
@@ -1461,12 +1461,12 @@ body::after{
 .cs-consequence-box.visible{display:flex;}
 .cs-consequence-label{
   font-family:'Press Start 2P',monospace;
-  font-size:7px;
+  font-size:11px;
   color:#d4a017;
   letter-spacing:2px;
 }
 .cs-consequence-text{
-  font-size:13px;
+  font-size:20px;
   line-height:1.8;
   color:#e0dcc8;
 }
@@ -1479,7 +1479,7 @@ body::after{
 }
 .cs-continue-btn{
   font-family:'Press Start 2P',monospace;
-  font-size:9px;
+  font-size:12px;
   background:linear-gradient(135deg,#1e3a5f,#2563eb);
   color:#fff;
   border:2px solid #3b82f6;
@@ -1491,7 +1491,7 @@ body::after{
 .cs-continue-btn:hover{background:linear-gradient(135deg,#2563eb,#3b82f6);}
 body.theme-hok .cs-consequence-box{background:linear-gradient(135deg,rgba(15,6,40,0.97),rgba(25,10,60,0.97));border-color:#c8960a;}
 body.theme-hok .cs-consequence-label{color:#f0c040;}
-body.theme-hok .cs-consequence-text{font-family:'Noto Serif SC',serif;font-size:14px;}
+body.theme-hok .cs-consequence-text{font-family:'Noto Serif SC',serif;font-size:20px;}
 body.theme-hok .cs-continue-btn{background:linear-gradient(135deg,#3b0764,#7c3aed);border-color:#a78bfa;}
 body.theme-hok #cs-act3{max-width:600px;}
 
@@ -2976,11 +2976,9 @@ function renderOutcome(){
     <div class="outcome-title">QUESTIONS TO REFLECT ON</div>
     ${ch.outcome.reflections.map(r => `<div class="reflection-item">${r}</div>`).join('')}`;
 
-  // Only show the first decision in the comparison table (2nd decision is shown in the cutscene)
-  const firstDecHist = chHist.slice(0, 1);
   let tbl = `<div class="outcome-title">YOUR CHOICE VS REALITY</div>
     <table class="cmp-table"><thead><tr><th>Decision</th><th>You</th><th>The Firm</th><th>Match?</th></tr></thead><tbody>`;
-  firstDecHist.forEach(h => {
+  chHist.forEach(h => {
     const match = h.letter === h.real;
     tbl += `<tr><td>${h.decTitle}</td><td><strong style="color:#5ce0d8">${h.letter}</strong></td><td><strong style="color:#f0c040">${h.real}</strong></td><td class="${match?'tag-match':'tag-diff'}">${match?'YES':'NO'}</td></tr>`;
   });
