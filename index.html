@@ -1884,10 +1884,55 @@ body.theme-hok #theme-toggle-btn:hover{
   background:linear-gradient(135deg,#c8960a,#f0c040);
   color:#0a0518;
 }
-/* Portrait swap: in HoK mode use hok-* images */
+//* Portrait swap: in HoK mode use hok-* images */
 body.theme-hok #char-male img.char-portrait{ content:url('images/hok-male-ceo.png'); }
 body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ceo.png'); }
 
+/* ============================================================= */
+/* FINAL MOBILE OVERRIDE — highest priority, must come last      */
+/* ============================================================= */
+@media(max-width:480px){
+  /* Secretary dialogue text */
+  .dialogue-text{
+    font-size:18px !important;
+    line-height:1.8 !important;
+  }
+  .dialogue-name{
+    font-size:16px !important;
+  }
+  /* Decision option items */
+  .opt-item{
+    font-size:18px !important;
+    line-height:1.8 !important;
+    padding:14px 10px !important;
+  }
+  body.theme-hok .opt-item{
+    font-size:18px !important;
+  }
+  /* Option letter badge */
+  .opt-letter{
+    font-size:16px !important;
+    width:32px !important;
+    height:32px !important;
+    line-height:32px !important;
+  }
+  /* Decision context card */
+  .decision-context-card{
+    font-size:17px !important;
+    line-height:1.8 !important;
+  }
+  /* HUD progress text */
+  .hud-progress{
+    font-size:16px !important;
+    line-height:1.4 !important;
+  }
+  /* Tab buttons */
+  .tab-btn{
+    font-size:13px !important;
+    padding:9px 8px !important;
+    min-width:0 !important;
+  }
+}
 </style>
 </head>
 <body>
