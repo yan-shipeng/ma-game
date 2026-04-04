@@ -2746,7 +2746,7 @@ function beginChapter(){
   
   // Show chapter image
   const imgEl = document.getElementById('ch-img');
-  imgEl.src = (window.getChapterImg && ch.id) ? window.getChapterImg(ch.id) : ch.img;
+  imgEl.src = (window.getChapterImg && ch.id) ? window.getChapterImg(ch.id, 0) : ch.img;
   imgEl.style.display = 'block';
   
   // Hide decision menu until dialogue finishes
@@ -2769,9 +2769,12 @@ function presentDecision(){
   updateHUD();
   updateProgress();
   
-  // If not first decision, hide chapter image
+  // For D2, show the dedicated D2 background image
+  const imgElD = document.getElementById('ch-img');
   if(G.dIdx > 0){
-    document.getElementById('ch-img').style.display = 'none';
+    const ch2 = CHAPTERS[G.chIdx];
+    imgElD.src = window.getChapterImg ? window.getChapterImg(ch2.id, G.dIdx) : '';
+    imgElD.style.display = 'block';
   }
   
   // Secretary delivers decision context
@@ -2938,7 +2941,7 @@ function renderOutcome(){
   // Show chapter image on outcome screen
   const outImg = document.getElementById('out-ch-img');
   if(outImg){
-    outImg.src = (window.getChapterImg && ch.id) ? window.getChapterImg(ch.id) : ch.img;
+    outImg.src = (window.getChapterImg && ch.id) ? window.getChapterImg(ch.id, G.dIdx) : ch.img;
     outImg.style.display = 'block';
   }
 
@@ -3376,19 +3379,32 @@ function exportSummary(){
     }
   }
 
-  // Chapter image map: id -> {default, hok}
+  // Chapter image map: id -> {d1: {default, hok}, d2: {default, hok}}
   const CHAPTER_IMGS = {
-    'A': { default: 'images/classic-ch-a.png', hok: 'images/anime-ch-a.png' },
-    'B': { default: 'images/classic-ch-b.png', hok: 'images/anime-ch-b.png' },
-    'C': { default: 'images/classic-ch-c.png', hok: 'images/anime-ch-c.png' },
-    'D': { default: 'images/classic-ch-d.png', hok: 'images/anime-ch-d.png' },
+    'A': {
+      d1: { default: 'images/classic-ch-a.png', hok: 'images/anime-ch-a.png' },
+      d2: { default: 'images/classic-ch-a-d2.jpg', hok: 'images/anime-ch-a-d2.jpg' },
+    },
+    'B': {
+      d1: { default: 'images/classic-ch-b.png', hok: 'images/anime-ch-b.png' },
+      d2: { default: 'images/classic-ch-b-d2.jpg', hok: 'images/anime-ch-b-d2.jpg' },
+    },
+    'C': {
+      d1: { default: 'images/classic-ch-c.png', hok: 'images/anime-ch-c.png' },
+      d2: { default: 'images/classic-ch-c-d2.jpg', hok: 'images/anime-ch-c-d2.jpg' },
+    },
+    'D': {
+      d1: { default: 'images/classic-ch-d.png', hok: 'images/anime-ch-d.png' },
+      d2: { default: 'images/classic-ch-d-d2.jpg', hok: 'images/anime-ch-d-d2.jpg' },
+    },
   };
 
-  window.getChapterImg = function(chId){
+  window.getChapterImg = function(chId, dIdx){
     const isHok = document.body.classList.contains('theme-hok');
     const map = CHAPTER_IMGS[chId];
     if(!map) return '';
-    return isHok ? map.hok : map.default;
+    const slot = (dIdx && dIdx > 0) ? map.d2 : map.d1;
+    return isHok ? slot.hok : slot.default;
   };
 
   window.toggleTheme = function(){
@@ -3401,7 +3417,7 @@ function exportSummary(){
     const chImgEl = document.getElementById('ch-img');
     if(chImgEl && chImgEl.style.display !== 'none' && typeof G !== 'undefined' && G.chIdx !== undefined){
       const ch = CHAPTERS[G.chIdx];
-      if(ch) chImgEl.src = window.getChapterImg(ch.id);
+      if(ch) chImgEl.src = window.getChapterImg(ch.id, G.dIdx);
     }
   };
 
