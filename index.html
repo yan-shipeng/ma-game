@@ -19,9 +19,9 @@ body{
   font-size:24px;
   line-height:1.7;
   overflow-x:hidden;
-  -webkit-font-smoothing: none;
-  -moz-osx-font-smoothing: unset;
-  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 /* Keep Press Start 2P only for titles and key labels */
 .title-name,.title-sub,.gameover-title,.final-archetype-title,
@@ -637,7 +637,7 @@ body::after{
   margin-bottom:12px;
 }
 .final-archetype-desc{
-  font-size:10px;
+  font-size:18px;
   color:#c8c4b0;
   line-height:2;
 }
@@ -682,10 +682,10 @@ body::after{
   margin-top:4px;
 }
 .tl-body{flex:1;}
-.tl-brand{font-size:9px;color:#d4a017;margin-bottom:6px;}
-.tl-choice{font-size:9px;color:#c8c4b0;line-height:1.8;margin-bottom:4px;}
-.tl-reason{font-size:9px;color:#5ce0d8;font-style:italic;margin-bottom:4px;line-height:1.6;}
-.tl-real{font-size:9px;color:#94a3b8;margin-top:4px;}
+.tl-brand{font-size:18px;color:#d4a017;margin-bottom:6px;}
+.tl-choice{font-size:18px;color:#c8c4b0;line-height:1.8;margin-bottom:4px;}
+.tl-reason{font-size:18px;color:#5ce0d8;font-style:italic;margin-bottom:4px;line-height:1.6;}
+.tl-real{font-size:18px;color:#94a3b8;margin-top:4px;}
 
 /* Reveals */
 .reveal-card{
@@ -865,7 +865,7 @@ body::after{
 
 /* --- [HIGH] Minimum font-size enforcement --- */
 .hud-bar-label{font-size:18px !important;}
-.hud-progress{font-size:13px !important;}
+.hud-progress{font-size:16px !important;}
 .hud-bar-value{font-size:18px !important;color:#fff;}
 .tab-btn{font-size:16px !important;padding:10px 16px !important;flex:1;min-width:120px;}
 .tl-brand,.tl-choice,.tl-reason,.tl-real{font-size:18px !important;}
@@ -2938,12 +2938,9 @@ function _doAfterConsequence(){
 function renderOutcome(){
   const ch = CHAPTERS[G.chIdx];
   updateHUD();
-  // Show chapter image on outcome screen
+  // Hide chapter image on outcome screen (per design)
   const outImg = document.getElementById('out-ch-img');
-  if(outImg){
-    outImg.src = (window.getChapterImg && ch.id) ? window.getChapterImg(ch.id, G.dIdx) : ch.img;
-    outImg.style.display = 'block';
-  }
+  if(outImg){ outImg.style.display = 'none'; }
 
   // Score delta summary for this chapter
   const chHist = G.history.filter(h => h.chId === ch.id);
