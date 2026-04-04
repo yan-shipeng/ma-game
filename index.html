@@ -1200,98 +1200,173 @@ body::after{
   margin-bottom:6px;
   letter-spacing:1px;
 }
-.cs-skip-hint{
+.cs-act1-btns{
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  margin-top:8px;
+}
+.cs-next-btn{
+  font-family:'Press Start 2P',monospace;
+  font-size:9px;
+  padding:10px 20px;
+  background:linear-gradient(135deg,#1e3a5f,#2563eb);
+  color:#e2e8f0;
+  border:2px solid #3b82f6;
+  cursor:pointer;
+  letter-spacing:1px;
+  transition:all 0.2s;
+  box-shadow:0 0 12px rgba(59,130,246,0.3);
+}
+.cs-next-btn:hover{
+  background:linear-gradient(135deg,#2563eb,#60a5fa);
+  box-shadow:0 0 20px rgba(59,130,246,0.5);
+}
+.cs-skip-btn{
   font-family:'Press Start 2P',monospace;
   font-size:7px;
+  padding:6px 14px;
+  background:transparent;
   color:#475569;
-  margin-top:8px;
+  border:1px solid #334155;
+  cursor:pointer;
   letter-spacing:1px;
-  animation:cs-blink 1.2s ease infinite;
+  transition:all 0.2s;
 }
-@keyframes cs-blink{
-  0%,100%{opacity:0.4;}
-  50%{opacity:1;}
+.cs-skip-btn:hover{
+  color:#94a3b8;
+  border-color:#475569;
 }
 
-/* --- Act 2: Policy implementation --- */
+/* --- Act 2: Cinematic timeline --- */
 #cs-act2{
   display:none;
   flex-direction:column;
   align-items:center;
-  gap:20px;
-  padding:24px 16px;
+  gap:28px;
+  padding:32px 24px;
   width:100%;
-  max-width:500px;
+  max-width:560px;
 }
 #cs-act2.active{display:flex;}
-.cs-policy-title{
-  font-family:'Press Start 2P',monospace;
-  font-size:10px;
-  color:#d4a017;
-  letter-spacing:2px;
+.cs-act2-header{
   text-align:center;
 }
-.cs-policy-steps{
+.cs-act2-badge{
+  display:inline-block;
+  font-family:'Press Start 2P',monospace;
+  font-size:7px;
+  color:#d4a017;
+  letter-spacing:3px;
+  border:1px solid rgba(212,160,23,0.4);
+  padding:4px 12px;
+  margin-bottom:10px;
+  text-transform:uppercase;
+}
+.cs-act2-title{
+  font-family:'Press Start 2P',monospace;
+  font-size:13px;
+  color:#f1f5f9;
+  letter-spacing:2px;
+}
+.cs-timeline{
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:0;
   width:100%;
+  position:relative;
 }
-.cs-step{
+.cs-tl-item{
   display:flex;
-  align-items:center;
-  gap:14px;
-  padding:12px 16px;
-  background:rgba(20,25,50,0.8);
-  border:1px solid rgba(212,160,23,0.2);
-  border-radius:2px;
-  opacity:0.3;
-  transition:opacity 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  align-items:flex-start;
+  gap:0;
+  opacity:0.2;
+  transition:opacity 0.5s ease;
+  position:relative;
 }
-.cs-step.lit{
+.cs-tl-item.lit{
   opacity:1;
-  border-color:#4ade80;
-  box-shadow:0 0 16px rgba(74,222,128,0.25);
 }
-.cs-step-icon{
-  font-size:20px;
-  min-width:28px;
-  text-align:center;
+.cs-tl-dot{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  flex-shrink:0;
+  width:40px;
 }
-.cs-step-text{
+.cs-tl-num{
   font-family:'Press Start 2P',monospace;
   font-size:8px;
-  color:#94a3b8;
-  line-height:1.8;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:2px solid rgba(212,160,23,0.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#64748b;
+  background:rgba(15,20,40,0.9);
+  transition:all 0.5s ease;
+  z-index:1;
+  position:relative;
 }
-.cs-step.lit .cs-step-text{color:#e2e8f0;}
+.cs-tl-item.lit .cs-tl-num{
+  border-color:#d4a017;
+  color:#d4a017;
+  background:rgba(212,160,23,0.1);
+  box-shadow:0 0 14px rgba(212,160,23,0.35);
+}
+.cs-tl-line{
+  width:2px;
+  height:48px;
+  background:rgba(212,160,23,0.15);
+  margin:0 auto;
+  transition:background 0.5s ease;
+}
+.cs-tl-item:last-child .cs-tl-line{
+  display:none;
+}
+.cs-tl-item.lit .cs-tl-line{
+  background:rgba(212,160,23,0.5);
+}
+.cs-tl-content{
+  padding:4px 0 40px 16px;
+}
+.cs-tl-label{
+  font-family:'Press Start 2P',monospace;
+  font-size:9px;
+  color:#94a3b8;
+  letter-spacing:1px;
+  transition:color 0.5s ease;
+}
+.cs-tl-item.lit .cs-tl-label{
+  color:#f1f5f9;
+}
+.cs-tl-sub{
+  font-family:'Press Start 2P',monospace;
+  font-size:7px;
+  color:#334155;
+  margin-top:4px;
+  line-height:1.8;
+  transition:color 0.5s ease;
+}
+.cs-tl-item.lit .cs-tl-sub{
+  color:#64748b;
+}
 .cs-executed{
   font-family:'Press Start 2P',monospace;
-  font-size:14px;
-  color:#4ade80;
-  letter-spacing:3px;
+  font-size:13px;
+  color:#d4a017;
+  letter-spacing:4px;
   text-align:center;
   opacity:0;
-  transform:scale(0.8);
-  transition:opacity 0.5s ease, transform 0.5s ease;
+  transform:translateY(10px);
+  transition:opacity 0.6s ease, transform 0.6s ease;
+  text-shadow:0 0 20px rgba(212,160,23,0.5);
 }
 .cs-executed.show{
   opacity:1;
-  transform:scale(1);
-}
-.cs-ripple{
-  width:80px;
-  height:80px;
-  border-radius:50%;
-  border:3px solid #4ade80;
-  opacity:0;
-  transform:scale(0);
-  transition:opacity 0.4s ease, transform 0.6s ease;
-  position:absolute;
-}
-.cs-ripple.expand{
-  opacity:0;
-  transform:scale(4);
+  transform:translateY(0);
 }
 
 /* --- Act 3: Score reveal --- */
@@ -1626,7 +1701,7 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 <!-- ============================================================= -->
 <!-- DECISION CUTSCENE OVERLAY                                     -->
 <!-- ============================================================= -->
-<div id="cutscene-overlay" onclick="skipCutscene()">
+<div id="cutscene-overlay">
 
   <!-- Act 1: CEO + Secretary dialogue -->
   <div id="cs-act1">
@@ -1644,28 +1719,46 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
       <div class="cs-speech-speaker" id="cs-speaker-label">CEO</div>
       <div class="cs-speech-text" id="cs-speech-text"></div>
     </div>
-    <div class="cs-skip-hint">CLICK ANYWHERE TO SKIP</div>
+    <div class="cs-act1-btns">
+      <button class="cs-next-btn" id="cs-next-btn" onclick="csAdvanceDialogue()" style="display:none;">NEXT ►</button>
+      <button class="cs-skip-btn" onclick="skipCutscene()">SKIP »</button>
+    </div>
   </div>
 
-  <!-- Act 2: Policy implementation -->
+  <!-- Act 2: Policy implementation (cinematic timeline) -->
   <div id="cs-act2">
-    <div class="cs-policy-title">IMPLEMENTING POLICY</div>
-    <div class="cs-policy-steps">
-      <div class="cs-step" id="cs-step-1">
-        <div class="cs-step-icon">📋</div>
-        <div class="cs-step-text">Board Notified</div>
+    <div class="cs-act2-header">
+      <div class="cs-act2-badge">DIRECTIVE ISSUED</div>
+      <div class="cs-act2-title" id="cs-act2-title">Option A</div>
+    </div>
+    <div class="cs-timeline">
+      <div class="cs-tl-item" id="cs-step-1">
+        <div class="cs-tl-dot"><span class="cs-tl-num">01</span></div>
+        <div class="cs-tl-line"></div>
+        <div class="cs-tl-content">
+          <div class="cs-tl-label">BOARD NOTIFIED</div>
+          <div class="cs-tl-sub">Resolution passed &amp; filed</div>
+        </div>
       </div>
-      <div class="cs-step" id="cs-step-2">
-        <div class="cs-step-icon">📣</div>
-        <div class="cs-step-text">Teams Briefed</div>
+      <div class="cs-tl-item" id="cs-step-2">
+        <div class="cs-tl-dot"><span class="cs-tl-num">02</span></div>
+        <div class="cs-tl-line"></div>
+        <div class="cs-tl-content">
+          <div class="cs-tl-label">TEAMS BRIEFED</div>
+          <div class="cs-tl-sub">All departments aligned</div>
+        </div>
       </div>
-      <div class="cs-step" id="cs-step-3">
-        <div class="cs-step-icon">✅</div>
-        <div class="cs-step-text">Policy Active</div>
+      <div class="cs-tl-item" id="cs-step-3">
+        <div class="cs-tl-dot"><span class="cs-tl-num">03</span></div>
+        <div class="cs-tl-line"></div>
+        <div class="cs-tl-content">
+          <div class="cs-tl-label">POLICY ACTIVE</div>
+          <div class="cs-tl-sub">Effective immediately</div>
+        </div>
       </div>
     </div>
     <div class="cs-executed" id="cs-executed">DECISION EXECUTED</div>
-    <div class="cs-skip-hint">CLICK ANYWHERE TO SKIP</div>
+    <button class="cs-skip-btn" onclick="skipCutscene()">SKIP »</button>
   </div>
 
   <!-- Act 3: Score delta reveal -->
@@ -1681,7 +1774,7 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
         <div class="cs-score-val" id="cs-esg-val" style="color:#4ade80">+0</div>
       </div>
     </div>
-    <div class="cs-skip-hint">CLICK ANYWHERE TO SKIP</div>
+    <button class="cs-skip-btn" onclick="skipCutscene()">SKIP »</button>
   </div>
 
 </div>
@@ -2695,17 +2788,11 @@ function selectOpt(opt){
 }
 
 function closeModal(){
-  if(G.showingCons) return;
   document.getElementById('confirm-modal').classList.remove('open');
 }
 
 function confirmChoice(){
   playClick();
-  if(G.showingCons){
-    document.getElementById('confirm-modal').classList.remove('open');
-    afterConsequence();
-    return;
-  }
   const opt = G.pending;
   const ch = CHAPTERS[G.chIdx];
   const dec = ch.decisions[G.dIdx];
@@ -2713,41 +2800,11 @@ function confirmChoice(){
   G.history.push({chId:ch.id, brand:ch.brand, dIdx:G.dIdx, decTitle:dec.title, letter:opt.l, text:opt.text, inv:opt.inv, esg:opt.esg, real:dec.real, reason});
   G.inv = Math.max(0, G.inv + opt.inv);
   G.esg = Math.max(0, G.esg + opt.esg);
-  
-  G.showingCons = true;
-  document.getElementById('modal-rationale-wrap').style.display = 'none';
-  document.getElementById('modal-phase-title').textContent = 'CONSEQUENCE';
-  document.getElementById('modal-back-btn').style.display = 'none';
-  document.getElementById('modal-ok-btn').style.display = 'none';
-
-  // Phase 1: show loading indicator
-  const consEl = document.getElementById('modal-consequence');
-  consEl.style.display = 'block';
-  consEl.innerHTML = `<div id="modal-consequence-loading">ANALYSING OUTCOME</div>`;
-
-  // Phase 2 (after 1200ms): fade in consequence text
-  setTimeout(() => {
-    consEl.innerHTML = `
-      <div class="modal-cons-text" id="modal-cons-text" style="opacity:0;transition:opacity 0.6s ease;"></div>
-      <div class="modal-deltas" id="modal-deltas" style="opacity:0;transition:opacity 0.6s ease 0.3s;"></div>`;
-    document.getElementById('modal-cons-text').textContent = opt.cons;
-    // Trigger fade-in on next frame
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        document.getElementById('modal-cons-text').style.opacity = '1';
-        document.getElementById('modal-deltas').style.opacity = '1';
-        document.getElementById('modal-deltas').innerHTML = pill(opt.inv, 'Investor') + pill(opt.esg, 'ESG');
-      });
-    });
-
-    // Phase 3 (after another 1000ms): show button + score change
-    setTimeout(() => {
-      document.getElementById('modal-ok-btn').style.display = '';
-      document.getElementById('modal-ok-btn').textContent = isGameOver() ? 'SEE RESULT →' : 'CONTINUE →';
-      showScoreChange(opt.inv, opt.esg);
-      updateHUD();
-    }, 1000);
-  }, 1200);
+  updateHUD();
+  showScoreChange(opt.inv, opt.esg);
+  // Close modal and immediately play cutscene
+  document.getElementById('confirm-modal').classList.remove('open');
+  afterConsequence();
 }
 
 function afterConsequence(){
@@ -3343,10 +3400,16 @@ function exportSummary(){
     return lines[Math.floor(Math.random() * lines.length)];
   }
 
+  // Dialogue state for button-driven Act 1
+  let csDialogueLines = [];
+  let csDialogueIdx = 0;
+  let csCurrentOpt = null;
+
   window.playCutscene = function(opt, callback){
     csSkipped = false;
     csCallback = callback;
     csTimers = [];
+    csCurrentOpt = opt;
 
     const overlay = document.getElementById('cutscene-overlay');
     const act1 = document.getElementById('cs-act1');
@@ -3359,6 +3422,7 @@ function exportSummary(){
     act3.classList.remove('active');
     document.getElementById('cs-executed').classList.remove('show');
     ['cs-step-1','cs-step-2','cs-step-3'].forEach(id => document.getElementById(id).classList.remove('lit'));
+    document.getElementById('cs-next-btn').style.display = 'none';
 
     // Populate portraits
     const isHok = document.body.classList.contains('theme-hok');
@@ -3370,38 +3434,66 @@ function exportSummary(){
     document.getElementById('cs-ceo-name').textContent = G.name ? G.name.toUpperCase() : 'CEO';
     document.getElementById('cs-sec-name').textContent = G.secName ? G.secName.toUpperCase() : 'SECRETARY';
 
+    // Build dialogue lines: [{speaker, speakerId, text}]
+    csDialogueLines = [
+      { speaker: G.name || 'CEO',            speakerId: 'ceo', text: ceoline(opt) },
+      { speaker: G.secName || 'SECRETARY',   speakerId: 'sec', text: secline(G.honorific, G.secName) }
+    ];
+    csDialogueIdx = 0;
+
     overlay.classList.add('active');
 
-    // --- ACT 1 ---
+    // Slide in characters
     const ceoel = document.getElementById('cs-ceo');
     const secel = document.getElementById('cs-sec');
     ceoel.classList.remove('slide-in','speaking');
     secel.classList.remove('slide-in','speaking');
-
     csTimeout(() => { ceoel.classList.add('slide-in'); }, 100);
     csTimeout(() => { secel.classList.add('slide-in'); }, 300);
 
-    // CEO speaks
-    csTimeout(() => {
-      ceoel.classList.add('speaking');
-      secel.classList.remove('speaking');
-      document.getElementById('cs-speaker-label').textContent = G.name || 'CEO';
-      const speechEl = document.getElementById('cs-speech-text');
-      const ceotxt = ceoline(opt);
-      typewrite(speechEl, ceotxt, 28, () => {
-        // Secretary replies
-        csTimeout(() => {
-          ceoel.classList.remove('speaking');
-          secel.classList.add('speaking');
-          document.getElementById('cs-speaker-label').textContent = G.secName || 'SECRETARY';
-          const sectxt = secline(G.honorific, G.secName);
-          typewrite(speechEl, sectxt, 28, () => {
-            // Transition to Act 2
-            csTimeout(() => startAct2(), 600);
-          });
-        }, 500);
-      });
-    }, 700);
+    // Start first line
+    csTimeout(() => csShowLine(), 600);
+  };
+
+  function csShowLine(){
+    if(csSkipped) return;
+    if(csDialogueIdx >= csDialogueLines.length) { startAct2(); return; }
+    const line = csDialogueLines[csDialogueIdx];
+    const ceoel = document.getElementById('cs-ceo');
+    const secel = document.getElementById('cs-sec');
+    ceoel.classList.toggle('speaking', line.speakerId === 'ceo');
+    secel.classList.toggle('speaking', line.speakerId === 'sec');
+    document.getElementById('cs-speaker-label').textContent = line.speaker;
+    document.getElementById('cs-next-btn').style.display = 'none';
+    const speechEl = document.getElementById('cs-speech-text');
+    typewrite(speechEl, line.text, 28, () => {
+      // Show NEXT button after typing completes
+      const nextBtn = document.getElementById('cs-next-btn');
+      nextBtn.style.display = '';
+      // Last line: change button text
+      nextBtn.textContent = csDialogueIdx >= csDialogueLines.length - 1 ? 'PROCEED ►' : 'NEXT ►';
+    });
+  }
+
+  window.csAdvanceDialogue = function(){
+    if(csSkipped) return;
+    // If still typing, complete it immediately
+    const speechEl = document.getElementById('cs-speech-text');
+    const line = csDialogueLines[csDialogueIdx];
+    if(speechEl.textContent.length < line.text.length){
+      clearAllTimers();
+      speechEl.textContent = line.text;
+      const nextBtn = document.getElementById('cs-next-btn');
+      nextBtn.style.display = '';
+      nextBtn.textContent = csDialogueIdx >= csDialogueLines.length - 1 ? 'PROCEED ►' : 'NEXT ►';
+      return;
+    }
+    csDialogueIdx++;
+    if(csDialogueIdx >= csDialogueLines.length){
+      startAct2();
+    } else {
+      csShowLine();
+    }
   };
 
   function startAct2(){
@@ -3410,6 +3502,10 @@ function exportSummary(){
     const act2 = document.getElementById('cs-act2');
     act1.style.display = 'none';
     act2.classList.add('active');
+
+    // Set option title in Act 2 header
+    const titleEl = document.getElementById('cs-act2-title');
+    if(titleEl && csCurrentOpt) titleEl.textContent = `Option ${csCurrentOpt.l}: ${csCurrentOpt.text.substring(0,50)}${csCurrentOpt.text.length>50?'...':''}`;
 
     const steps = ['cs-step-1','cs-step-2','cs-step-3'];
     steps.forEach((id, i) => {
@@ -3423,7 +3519,7 @@ function exportSummary(){
       if(csSkipped) return;
       const ex = document.getElementById('cs-executed');
       ex.classList.add('show');
-      csTimeout(() => startAct3(), 1200);
+      csTimeout(() => startAct3(), 1400);
     }, 3 * 900);
   }
 
