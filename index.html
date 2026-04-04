@@ -864,7 +864,7 @@ body::after{
 /* ============================================================= */
 
 /* --- [HIGH] Minimum font-size enforcement --- */
-.hud-bar-label{font-size:14px !important;}
+.hud-bar-label{font-size:18px !important;}
 .hud-progress{font-size:13px !important;}
 .hud-bar-value{font-size:18px !important;color:#fff;}
 .tab-btn{font-size:16px !important;padding:10px 16px !important;flex:1;min-width:120px;}
@@ -1094,7 +1094,7 @@ body::after{
   border-left:3px solid #5ce0d8;
   padding:12px 16px;
   margin-bottom:12px;
-  font-size:10px;
+  font-size:18px;
   color:#94a3b8;
   line-height:1.9;
 }
@@ -1888,9 +1888,9 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 <!-- ============================================================= -->
 <div class="screen" id="s-intro" style="justify-content:center;align-items:center;gap:20px;text-align:center;">
   <img src="images/titan-hero.jpg" class="title-logo pixel-border" alt="Titan" style="max-width:500px;"/>
-  <div style="font-size:12px;color:#d4a017;margin-top:12px;">TITAN CHALLENGE</div>
+  <div style="font-size:20px;color:#d4a017;margin-top:12px;">TITAN CHALLENGE</div>
   <div id="intro-scores-hud" style="width:100%;max-width:500px;"></div>
-  <div style="font-size:9px;color:#5ce0d8;max-width:500px;line-height:2;margin-top:8px;">
+  <div style="font-size:18px;color:#5ce0d8;max-width:500px;line-height:2;margin-top:8px;">
     Your secretary will brief you. Click the dialogue box to advance.
   </div>
   <button class="pixel-btn pixel-btn-green" id="intro-start-btn" onclick="startIntroDialogue()">OPEN BRIEFING</button>
@@ -2809,7 +2809,7 @@ function renderOptions(dec){
   });
 
   menu.classList.add('active');
-  menu.scrollIntoView({behavior:'smooth', block:'start'});
+  window.scrollTo({top:0, behavior:'smooth'});
 
   // Store options for keyboard nav
   window._currentOptMap = {};
