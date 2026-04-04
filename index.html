@@ -402,9 +402,11 @@ body::after{
 /* ============================================================= */
 .chapter-scene{
   width:100%;
-  max-height:260px;
+  max-height:220px;
   object-fit:cover;
+  object-position:center top;
   image-rendering:auto;
+  margin-top:auto;
   margin-bottom:16px;
 }
 
@@ -1246,6 +1248,8 @@ body::after{
   display:none;
   flex-direction:column;
   align-items:center;
+  justify-content:center;
+  min-height:200px;
   gap:28px;
   padding:32px 24px;
   width:100%;
@@ -1356,20 +1360,25 @@ body::after{
 .cs-tl-item.lit .cs-tl-sub{
   color:#64748b;
 }
+@keyframes cs-glow-pulse{
+  0%,100%{text-shadow:0 0 8px #d4a017,0 0 20px #d4a017;}
+  50%{text-shadow:0 0 24px #ffd700,0 0 60px #ffd700,0 0 80px rgba(255,215,0,0.4);}
+}
 .cs-executed{
   font-family:'Press Start 2P',monospace;
-  font-size:13px;
+  font-size:22px;
   color:#d4a017;
-  letter-spacing:4px;
+  letter-spacing:6px;
   text-align:center;
   opacity:0;
-  transform:translateY(10px);
-  transition:opacity 0.6s ease, transform 0.6s ease;
+  transform:scale(0.7);
+  transition:opacity 0.7s ease, transform 0.7s cubic-bezier(0.175,0.885,0.32,1.275);
   text-shadow:0 0 20px rgba(212,160,23,0.5);
 }
 .cs-executed.show{
   opacity:1;
-  transform:translateY(0);
+  transform:scale(1);
+  animation:cs-glow-pulse 1.8s ease-in-out infinite 0.7s;
 }
 
 /* --- Act 3: Score reveal --- */
@@ -1785,36 +1794,6 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 
   <!-- Act 2: Policy implementation (cinematic timeline) -->
   <div id="cs-act2">
-    <div class="cs-act2-header">
-      <div class="cs-act2-badge">DIRECTIVE ISSUED</div>
-      <div class="cs-act2-title" id="cs-act2-title">Option A</div>
-    </div>
-    <div class="cs-timeline">
-      <div class="cs-tl-item" id="cs-step-1">
-        <div class="cs-tl-dot"><span class="cs-tl-num">01</span></div>
-        <div class="cs-tl-line"></div>
-        <div class="cs-tl-content">
-          <div class="cs-tl-label">BOARD NOTIFIED</div>
-          <div class="cs-tl-sub">Resolution passed &amp; filed</div>
-        </div>
-      </div>
-      <div class="cs-tl-item" id="cs-step-2">
-        <div class="cs-tl-dot"><span class="cs-tl-num">02</span></div>
-        <div class="cs-tl-line"></div>
-        <div class="cs-tl-content">
-          <div class="cs-tl-label">TEAMS BRIEFED</div>
-          <div class="cs-tl-sub">All departments aligned</div>
-        </div>
-      </div>
-      <div class="cs-tl-item" id="cs-step-3">
-        <div class="cs-tl-dot"><span class="cs-tl-num">03</span></div>
-        <div class="cs-tl-line"></div>
-        <div class="cs-tl-content">
-          <div class="cs-tl-label">POLICY ACTIVE</div>
-          <div class="cs-tl-sub">Effective immediately</div>
-        </div>
-      </div>
-    </div>
     <div class="cs-executed" id="cs-executed">DECISION EXECUTED</div>
     <button class="cs-skip-btn" onclick="skipCutscene()">SKIP »</button>
   </div>
@@ -1906,7 +1885,7 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 <!-- ============================================================= -->
 <!-- SCREEN: DECISION (main gameplay)                              -->
 <!-- ============================================================= -->
-<div class="screen" id="s-decision">
+<div class="screen" id="s-decision" style="display:flex;flex-direction:column;">
   <div class="hud" id="hud">
     <div class="hud-inner pixel-border">
       <div class="hud-bar-group">
@@ -3509,7 +3488,6 @@ function exportSummary(){
     act2.classList.remove('active');
     act3.classList.remove('active');
     document.getElementById('cs-executed').classList.remove('show');
-    ['cs-step-1','cs-step-2','cs-step-3'].forEach(id => document.getElementById(id).classList.remove('lit'));
     document.getElementById('cs-next-btn').style.display = 'none';
 
     // Populate portraits
@@ -3591,24 +3569,13 @@ function exportSummary(){
     act1.style.display = 'none';
     act2.classList.add('active');
 
-    // Set option title in Act 2 header
-    const titleEl = document.getElementById('cs-act2-title');
-    if(titleEl && csCurrentOpt) titleEl.textContent = `Option ${csCurrentOpt.l}: ${csCurrentOpt.text.substring(0,50)}${csCurrentOpt.text.length>50?'...':''}`;
-
-    const steps = ['cs-step-1','cs-step-2','cs-step-3'];
-    steps.forEach((id, i) => {
-      csTimeout(() => {
-        if(csSkipped) return;
-        document.getElementById(id).classList.add('lit');
-      }, i * 900);
-    });
-
+    // Show DECISION EXECUTED with pop animation then advance
     csTimeout(() => {
       if(csSkipped) return;
       const ex = document.getElementById('cs-executed');
       ex.classList.add('show');
-      csTimeout(() => startAct3(), 1400);
-    }, 3 * 900);
+      csTimeout(() => startAct3(), 1800);
+    }, 300);
   }
 
   function startAct3(){
@@ -3682,6 +3649,8 @@ function exportSummary(){
     clearAllTimers();
     finishCutscene();
   };
+
+  window.finishCutscene = finishCutscene;
 })();
 </script>
 <script data-pplx-inline-edit>
