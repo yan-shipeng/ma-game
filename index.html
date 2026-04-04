@@ -10,13 +10,13 @@
 /* RESET & BASE                                                   */
 /* ============================================================= */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{font-size:16px;}
+html{font-size:18px;}
 body{
   min-height:100vh;
   background:#0c0e1a;
   color:#e0dcc8;
   font-family:'VT323',monospace;
-  font-size:20px;
+  font-size:24px;
   line-height:1.7;
   overflow-x:hidden;
   -webkit-font-smoothing: none;
@@ -377,7 +377,7 @@ body::after{
   background:#0c0e1a;
 }
 .dialogue-name{
-  font-size:8px;
+  font-size:18px;
   color:#f0c040;
   text-align:center;
 }
@@ -389,8 +389,8 @@ body::after{
   position:relative;
 }
 .dialogue-text{
-  font-size:11px;
-  line-height:2;
+  font-size:22px;
+  line-height:1.8;
   color:#e0dcc8;
   min-height:80px;
 }
@@ -433,7 +433,7 @@ body::after{
 }
 .decision-menu.active{display:flex;}
 .decision-menu-title{
-  font-size:11px;
+  font-size:16px;
   color:#5ce0d8;
   margin-bottom:8px;
   text-align:center;
@@ -446,7 +446,7 @@ body::after{
   display:flex;
   align-items:flex-start;
   gap:12px;
-  font-size:10px;
+  font-size:20px;
   line-height:1.8;
   position:relative;
 }
@@ -863,22 +863,22 @@ body::after{
 /* ============================================================= */
 
 /* --- [HIGH] Minimum font-size enforcement --- */
-.hud-bar-label{font-size:10px !important;}
-.hud-progress{font-size:10px !important;}
-.hud-bar-value{font-size:14px !important;color:#fff;}
-.tab-btn{font-size:10px !important;padding:10px 16px !important;flex:1;min-width:120px;}
-.tl-brand,.tl-choice,.tl-reason,.tl-real{font-size:10px !important;}
-.lb-table th,.lb-table td{font-size:10px !important;}
-.dist-title,.bar-row{font-size:10px !important;}
-.badge{font-size:8px !important;}
-.cmp-table{font-size:10px !important;}
-.go-score-label{font-size:10px !important;}
-.opt-item{font-size:11px !important;line-height:1.9;}
+.hud-bar-label{font-size:16px !important;}
+.hud-progress{font-size:14px !important;}
+.hud-bar-value{font-size:20px !important;color:#fff;}
+.tab-btn{font-size:16px !important;padding:10px 16px !important;flex:1;min-width:120px;}
+.tl-brand,.tl-choice,.tl-reason,.tl-real{font-size:18px !important;}
+.lb-table th,.lb-table td{font-size:18px !important;}
+.dist-title,.bar-row{font-size:18px !important;}
+.badge{font-size:14px !important;}
+.cmp-table{font-size:18px !important;}
+.go-score-label{font-size:18px !important;}
+.opt-item{font-size:20px !important;line-height:1.9;}
 
 /* --- [HIGH] Char card larger portraits --- */
 .char-card{width:240px;}
 .char-portrait{width:128px;height:128px;}
-.char-bio{font-size:9px;color:#94a3b8;line-height:1.7;margin-top:8px;padding:0 4px;}
+.char-bio{font-size:18px;color:#94a3b8;line-height:1.7;margin-top:8px;padding:0 4px;}
 
 /* --- [HIGH] BEGIN QUEST disabled state --- */
 .pixel-btn:disabled{
@@ -1056,7 +1056,7 @@ body::after{
   background:#111827;
   border-left:3px solid #d4a017;
 }
-.outcome-delta-label{font-size:9px;color:#94a3b8;margin-bottom:4px;}
+.outcome-delta-label{font-size:18px;color:#94a3b8;margin-bottom:4px;}
 .outcome-delta-val{font-size:18px;font-weight:bold;}
 
 /* --- [MEDIUM] Sticky CONTINUE button on outcome screen --- */
@@ -1072,7 +1072,7 @@ body::after{
 
 /* --- [MEDIUM] Game Over "what went wrong" section --- */
 .gameover-detail{
-  font-size:9px;
+  font-size:18px;
   color:#94a3b8;
   max-width:500px;
   text-align:center;
