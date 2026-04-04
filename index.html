@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Titan Challenge — RPG Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Press+Start+2P&display=swap" rel="stylesheet"/>
 <style>
 /* ============================================================= */
 /* RESET & BASE                                                   */
@@ -15,15 +15,14 @@ body{
   min-height:100vh;
   background:#0c0e1a;
   color:#e0dcc8;
-  font-family:'VT323',monospace;
-  font-size:26px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:20px;
   line-height:1.7;
   overflow-x:hidden;
-  /* VT323 is a pixel/bitmap font — disable antialiasing for crisp rendering */
-  -webkit-font-smoothing: none;
-  -moz-osx-font-smoothing: auto;
-  text-rendering: optimizeSpeed;
-  font-smooth: never;
+  /* Share Tech Mono: crisp monospace, standard rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 /* Keep Press Start 2P only for titles and key labels */
 .title-name,.title-sub,.gameover-title,.final-archetype-title,
@@ -32,8 +31,7 @@ body{
   font-family:'Press Start 2P',monospace;
 }
 
-/* Scanline overlay — disabled in classic theme for cleaner font rendering */
-/* body::after removed to improve VT323 text clarity */
+/* Scanline overlay — disabled for cleaner font rendering */
 
 /* ============================================================= */
 /* PIXEL BORDER SYSTEM                                            */
@@ -524,7 +522,7 @@ body{
   margin-bottom:8px;
 }
 .modal-reason-input{
-  font-family:'VT323',monospace;
+  font-family:'Share Tech Mono',monospace;
   font-size:20px;
   width:100%;
   min-height:60px;
@@ -1932,7 +1930,7 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 <body>
 
 <!-- Theme toggle button -->
-<button id="theme-toggle-btn" onclick="toggleTheme()" title="Switch UI Theme">🎮 HoK THEME</button>
+<button id="theme-toggle-btn" onclick="toggleTheme()" title="Switch UI Theme">🎨 MODERN THEME</button>
 
 <!-- ============================================================= -->
 <!-- DECISION CUTSCENE OVERLAY                                     -->
@@ -3562,7 +3560,7 @@ function exportSummary(){
   window.toggleTheme = function(){
     const btn = document.getElementById('theme-toggle-btn');
     const isHok = document.body.classList.toggle('theme-hok');
-    btn.textContent = isHok ? '\u2728 CLASSIC' : '\uD83C\uDFAE MODERN THEME';
+    btn.textContent = isHok ? '\uD83C\uDFAE CLASSIC THEME' : '\uD83C\uDFA8 MODERN THEME';
     applyPortraits(isHok ? 'hok' : 'default');
     localStorage.setItem('ma-game-theme', isHok ? 'hok' : 'default');
     // Swap chapter image if currently visible
@@ -3578,7 +3576,7 @@ function exportSummary(){
     const saved = localStorage.getItem('ma-game-theme');
     if(saved === 'hok'){
       document.body.classList.add('theme-hok');
-      document.getElementById('theme-toggle-btn').textContent = '\u2728 CLASSIC';
+      document.getElementById('theme-toggle-btn').textContent = '\uD83C\uDFAE CLASSIC THEME';
       applyPortraits('hok');
     }
   });
