@@ -121,7 +121,7 @@ body::after{
   to{text-shadow:0 0 30px rgba(212,160,23,0.6),0 0 60px rgba(212,160,23,0.2);}
 }
 .title-subtitle{
-  font-size:10px;
+  font-size:20px;
   color:#5ce0d8;
   letter-spacing:2px;
 }
@@ -151,7 +151,7 @@ body::after{
 }
 .pixel-btn{
   font-family:'Press Start 2P',monospace;
-  font-size:11px;
+  font-size:13px;
   padding:14px 32px;
   background:#1a1a2e;
   color:#d4a017;
@@ -255,7 +255,7 @@ body::after{
   border:2px solid #d4a017;
 }
 .char-label{
-  font-size:10px;
+  font-size:18px;
   color:#f0c040;
   margin-top:8px;
 }
@@ -275,7 +275,7 @@ body::after{
   gap:12px;
 }
 .name-label{
-  font-size:10px;
+  font-size:20px;
   color:#5ce0d8;
 }
 
@@ -287,32 +287,32 @@ body::after{
   top:0;
   z-index:100;
   background:#0c0e1a;
-  padding:10px 0;
-  margin-bottom:16px;
+  padding:4px 0;
+  margin-bottom:8px;
 }
 .hud-inner{
   background:#111827;
-  padding:12px 16px;
+  padding:6px 12px;
   display:flex;
-  gap:16px;
+  gap:12px;
   align-items:center;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
 }
 .hud-bar-group{
   flex:1;
-  min-width:180px;
+  min-width:120px;
 }
 .hud-bar-label{
-  font-size:8px;
+  font-size:14px;
   color:#94a3b8;
-  margin-bottom:4px;
+  margin-bottom:2px;
   display:flex;
   justify-content:space-between;
 }
 .hud-bar-track{
-  height:16px;
+  height:10px;
   background:#1e293b;
-  border:2px solid #334155;
+  border:1px solid #334155;
   position:relative;
   overflow:hidden;
 }
@@ -324,16 +324,16 @@ body::after{
 .hud-bar-fill.inv{background:linear-gradient(90deg,#1e40af,#3b82f6);}
 .hud-bar-fill.esg{background:linear-gradient(90deg,#166534,#4ade80);}
 .hud-bar-value{
-  font-size:9px;
+  font-size:16px;
   color:#fff;
   font-weight:bold;
 }
 .hud-progress{
-  font-size:8px;
+  font-size:13px;
   color:#d4a017;
   text-align:center;
-  width:100%;
-  margin-top:4px;
+  white-space:nowrap;
+  margin-top:0;
 }
 
 /* ============================================================= */
@@ -863,9 +863,9 @@ body::after{
 /* ============================================================= */
 
 /* --- [HIGH] Minimum font-size enforcement --- */
-.hud-bar-label{font-size:16px !important;}
-.hud-progress{font-size:14px !important;}
-.hud-bar-value{font-size:20px !important;color:#fff;}
+.hud-bar-label{font-size:14px !important;}
+.hud-progress{font-size:13px !important;}
+.hud-bar-value{font-size:18px !important;color:#fff;}
 .tab-btn{font-size:16px !important;padding:10px 16px !important;flex:1;min-width:120px;}
 .tl-brand,.tl-choice,.tl-reason,.tl-real{font-size:18px !important;}
 .lb-table th,.lb-table td{font-size:18px !important;}
@@ -950,21 +950,22 @@ body::after{
 /* --- [MEDIUM] HUD chapter breadcrumb dots --- */
 .hud-chapters{
   display:flex;
-  gap:6px;
+  gap:4px;
   align-items:center;
   justify-content:center;
-  width:100%;
-  margin-top:6px;
+  flex-shrink:0;
+  margin-top:0;
 }
 .hud-ch-dot{
-  width:10px;height:10px;
-  border:2px solid #334155;
+  width:8px;height:8px;
+  border:1px solid #334155;
   background:#1e293b;
   transition:all 0.3s;
   flex-shrink:0;
+  border-radius:50%;
 }
 .hud-ch-dot.done{background:#d4a017;border-color:#d4a017;}
-.hud-ch-dot.active{background:#5ce0d8;border-color:#5ce0d8;box-shadow:0 0 6px rgba(92,224,216,0.5);}
+.hud-ch-dot.active{background:#5ce0d8;border-color:#5ce0d8;box-shadow:0 0 4px rgba(92,224,216,0.5);}
 
 /* --- [MEDIUM] Modal entry animation --- */
 @keyframes modal-enter{
@@ -1652,12 +1653,12 @@ body.theme-hok .dialogue-box.speaker-sec{
 }
 body.theme-hok .dialogue-name{
   color:#f0c040;
-  font-size:12px !important;
+  font-size:20px !important;
   letter-spacing:1px;
 }
 body.theme-hok .dialogue-text{
-  font-size:16px !important;
-  line-height:2 !important;
+  font-size:22px !important;
+  line-height:1.9 !important;
   font-family:'Noto Serif SC',serif !important;
 }
 body.theme-hok .dialogue-portrait{border:2px solid #c8960a;border-radius:4px;}
@@ -1680,7 +1681,8 @@ body.theme-hok .opt-item:hover .opt-letter{
   background:#c8960a;
   color:#0a0518;
 }
-body.theme-hok .decision-menu-title{color:#a78bfa;}
+body.theme-hok .decision-menu-title{color:#a78bfa;font-size:20px !important;}
+body.theme-hok .opt-item{font-size:20px !important;}
 /* Modal */
 body.theme-hok .modal-overlay{
   background:rgba(5,2,20,0.92);
