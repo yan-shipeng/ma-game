@@ -286,7 +286,7 @@ body{
   flex-wrap:nowrap;
 }
 .hud-bar-group{
-  flex:1;
+  flex:2;
   min-width:0;
   overflow:hidden;
 }
@@ -320,11 +320,12 @@ body{
   font-weight:bold;
 }
 .hud-progress{
-  font-size:13px;
+  font-size:11px;
   color:#d4a017;
   text-align:center;
   white-space:nowrap;
   margin-top:0;
+  flex-shrink:0;
 }
 
 /* ============================================================= */
@@ -862,7 +863,7 @@ body{
     flex-shrink:0;
   }
   .hud-progress{
-    font-size:16px !important;
+    font-size:13px !important;
     white-space:normal;
     text-align:center;
     width:100%;
@@ -971,9 +972,9 @@ body{
 
 /* --- [HIGH] Minimum font-size enforcement --- */
 /* hud-bar-label: keep at 16px to prevent wrapping; white-space:nowrap enforced above */
-.hud-bar-label{font-size:16px !important;white-space:nowrap !important;}
-.hud-progress{font-size:16px !important;}
-.hud-bar-value{font-size:18px !important;color:#fff;}
+.hud-bar-label{font-size:13px !important;white-space:nowrap !important;overflow:hidden;}
+.hud-progress{font-size:11px !important;}
+.hud-bar-value{font-size:15px !important;color:#fff;}
 .tab-btn{font-size:16px !important;padding:10px 16px !important;flex:1;min-width:120px;}
 .tl-brand,.tl-choice,.tl-reason,.tl-real{font-size:18px !important;}
 .lb-table th,.lb-table td{font-size:18px !important;}
@@ -1915,7 +1916,7 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
   }
   /* HUD progress text */
   .hud-progress{
-    font-size:16px !important;
+    font-size:13px !important;
     line-height:1.4 !important;
   }
   /* Tab buttons */
@@ -1993,24 +1994,14 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 </div>
 
 <!-- ============================================================= -->
-<!-- SCREEN: ACCESS CODE                                           -->
+<!-- SCREEN: TITLE (no access code — goes directly to char select) -->
 <!-- ============================================================= -->
-<div class="screen title-screen active" id="s-password">
-  <img src="images/titan-hero.jpg" class="title-logo pixel-border" alt="Titan Challenge"/>
-  <div class="title-name">TITAN CHALLENGE</div>
-  <div class="title-subtitle">— RPG EDITION —</div>
-  <div style="margin-top:12px;">
-    <input type="text" id="pw-input" class="pixel-input" placeholder="ACCESS CODE" maxlength="20"
-      onkeydown="if(event.key==='Enter')checkPassword()"/>
-  </div>
-  <div class="err-msg" id="pw-err"></div>
-  <button class="pixel-btn" onclick="checkPassword()">PRESS START</button>
-</div>
+<div class="screen title-screen" id="s-password" style="display:none;"></div>
 
 <!-- ============================================================= -->
 <!-- SCREEN: CHARACTER SELECT                                      -->
 <!-- ============================================================= -->
-<div class="screen char-select" id="s-charselect">
+<div class="screen char-select active" id="s-charselect">
   <div class="char-select-title">SELECT YOUR CEO</div>
   <div class="char-cards">
     <div class="char-card pixel-border" id="char-male" onclick="selectChar('male')">
@@ -2040,7 +2031,6 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 <!-- SCREEN: INTRO (secretary introduces the game)                 -->
 <!-- ============================================================= -->
 <div class="screen" id="s-intro" style="justify-content:center;align-items:center;gap:20px;text-align:center;">
-  <img src="images/titan-hero.jpg" class="title-logo pixel-border" alt="Titan" style="max-width:500px;"/>
   <div style="font-size:20px;color:#d4a017;margin-top:12px;">TITAN CHALLENGE</div>
   <div id="intro-scores-hud" style="width:100%;max-width:500px;"></div>
   <div style="font-size:18px;color:#5ce0d8;max-width:500px;line-height:2;margin-top:8px;">
@@ -2591,8 +2581,7 @@ document.addEventListener('keydown', e => {
   }
   if(e.key === 'Enter'){
     const active = document.querySelector('.screen.active');
-    if(active && active.id === 's-password') checkPassword();
-    else if(active && active.id === 's-charselect') register();
+    if(active && active.id === 's-charselect') register();
   }
 });
 
