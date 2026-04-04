@@ -332,12 +332,15 @@ body::after{
 /* ============================================================= */
 .dialogue-overlay{
   position:fixed;
-  bottom:0;left:0;right:0;
+  top:0;left:0;right:0;bottom:0;
   z-index:200;
   padding:12px;
   display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.45);
 }
-.dialogue-overlay.active{display:block;}
+.dialogue-overlay.active{display:flex !important;}
 .dialogue-box{
   max-width:860px;
   margin:0 auto;
@@ -1414,6 +1417,61 @@ body::after{
   font-weight:bold;
   transition:color 0.3s;
 }
+.cs-score-total{
+  font-family:'Press Start 2P',monospace;
+  font-size:6px;
+  color:#64748b;
+  letter-spacing:1px;
+  text-align:center;
+}
+.cs-consequence-box{
+  width:100%;
+  max-width:560px;
+  background:rgba(15,20,40,0.92);
+  border:1px solid rgba(212,160,23,0.35);
+  border-radius:4px;
+  padding:16px 20px;
+  display:none;
+  flex-direction:column;
+  gap:10px;
+  animation:consequence-flash 0.4s ease forwards;
+}
+.cs-consequence-box.visible{display:flex;}
+.cs-consequence-label{
+  font-family:'Press Start 2P',monospace;
+  font-size:7px;
+  color:#d4a017;
+  letter-spacing:2px;
+}
+.cs-consequence-text{
+  font-size:13px;
+  line-height:1.8;
+  color:#e0dcc8;
+}
+.cs-act3-btns{
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.cs-continue-btn{
+  font-family:'Press Start 2P',monospace;
+  font-size:9px;
+  background:linear-gradient(135deg,#1e3a5f,#2563eb);
+  color:#fff;
+  border:2px solid #3b82f6;
+  padding:10px 20px;
+  cursor:pointer;
+  letter-spacing:1px;
+  animation:consequence-flash 0.4s ease forwards;
+}
+.cs-continue-btn:hover{background:linear-gradient(135deg,#2563eb,#3b82f6);}
+body.theme-hok .cs-consequence-box{background:linear-gradient(135deg,rgba(15,6,40,0.97),rgba(25,10,60,0.97));border-color:#c8960a;}
+body.theme-hok .cs-consequence-label{color:#f0c040;}
+body.theme-hok .cs-consequence-text{font-family:'Noto Serif SC',serif;font-size:14px;}
+body.theme-hok .cs-continue-btn{background:linear-gradient(135deg,#3b0764,#7c3aed);border-color:#a78bfa;}
+body.theme-hok #cs-act3{max-width:600px;}
 
 /* HoK theme overrides for cutscene */
 body.theme-hok #cutscene-overlay{
@@ -1763,18 +1821,27 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 
   <!-- Act 3: Score delta reveal -->
   <div id="cs-act3">
-    <div class="cs-score-title">IMPACT ON YOUR SCORES</div>
+    <div class="cs-score-title">DECISION IMPACT</div>
     <div class="cs-scores">
       <div class="cs-score-box">
         <div class="cs-score-label">INVESTOR</div>
         <div class="cs-score-val" id="cs-inv-val" style="color:#3b82f6">+0</div>
+        <div class="cs-score-total" id="cs-inv-total"></div>
       </div>
       <div class="cs-score-box">
         <div class="cs-score-label">ESG</div>
         <div class="cs-score-val" id="cs-esg-val" style="color:#4ade80">+0</div>
+        <div class="cs-score-total" id="cs-esg-total"></div>
       </div>
     </div>
-    <button class="cs-skip-btn" onclick="skipCutscene()">SKIP »</button>
+    <div class="cs-consequence-box" id="cs-consequence-box">
+      <div class="cs-consequence-label">WHAT HAPPENED</div>
+      <div class="cs-consequence-text" id="cs-consequence-text"></div>
+    </div>
+    <div class="cs-act3-btns">
+      <button class="cs-skip-btn" onclick="skipCutscene()">SKIP »</button>
+      <button class="cs-continue-btn" id="cs-continue-btn" onclick="finishCutscene()" style="display:none">CONTINUE →</button>
+    </div>
   </div>
 
 </div>
@@ -1871,7 +1938,7 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
   </div>
   <img id="ch-img" class="chapter-scene pixel-border" src="" alt="" style="display:none;"/>
   <div id="decision-menu" class="decision-menu"></div>
-  <div class="spacer-dialogue"></div>
+
 </div>
 
 <!-- ============================================================= -->
@@ -2685,7 +2752,7 @@ function beginChapter(){
   
   // Show chapter image
   const imgEl = document.getElementById('ch-img');
-  imgEl.src = ch.img;
+  imgEl.src = (window.getChapterImg && ch.id) ? window.getChapterImg(ch.id) : ch.img;
   imgEl.style.display = 'block';
   
   // Hide decision menu until dialogue finishes
@@ -3305,12 +3372,33 @@ function exportSummary(){
     }
   }
 
+  // Chapter image map: id -> {default, hok}
+  const CHAPTER_IMGS = {
+    'A': { default: 'images/classic-ch-a.png', hok: 'images/anime-ch-a.png' },
+    'B': { default: 'images/classic-ch-b.png', hok: 'images/anime-ch-b.png' },
+    'C': { default: 'images/classic-ch-c.png', hok: 'images/anime-ch-c.png' },
+    'D': { default: 'images/classic-ch-d.png', hok: 'images/anime-ch-d.png' },
+  };
+
+  window.getChapterImg = function(chId){
+    const isHok = document.body.classList.contains('theme-hok');
+    const map = CHAPTER_IMGS[chId];
+    if(!map) return '';
+    return isHok ? map.hok : map.default;
+  };
+
   window.toggleTheme = function(){
     const btn = document.getElementById('theme-toggle-btn');
     const isHok = document.body.classList.toggle('theme-hok');
-    btn.textContent = isHok ? '\u2728 CLASSIC' : '\uD83C\uDFAE HoK THEME';
+    btn.textContent = isHok ? '\u2728 CLASSIC' : '\uD83C\uDFAE MODERN THEME';
     applyPortraits(isHok ? 'hok' : 'default');
     localStorage.setItem('ma-game-theme', isHok ? 'hok' : 'default');
+    // Swap chapter image if currently visible
+    const chImgEl = document.getElementById('ch-img');
+    if(chImgEl && chImgEl.style.display !== 'none' && typeof G !== 'undefined' && G.chIdx !== undefined){
+      const ch = CHAPTERS[G.chIdx];
+      if(ch) chImgEl.src = window.getChapterImg(ch.id);
+    }
   };
 
   // Restore saved theme on load
@@ -3532,9 +3620,25 @@ function exportSummary(){
 
     const invEl = document.getElementById('cs-inv-val');
     const esgEl = document.getElementById('cs-esg-val');
+    const invTotalEl = document.getElementById('cs-inv-total');
+    const esgTotalEl = document.getElementById('cs-esg-total');
+    const consBox = document.getElementById('cs-consequence-box');
+    const consText = document.getElementById('cs-consequence-text');
+    const continueBtn = document.getElementById('cs-continue-btn');
+
+    // Reset
+    consBox.classList.remove('visible');
+    continueBtn.style.display = 'none';
+    invTotalEl.textContent = '';
+    esgTotalEl.textContent = '';
+
     const lastH = G.history[G.history.length - 1];
     const invDelta = lastH ? lastH.inv : 0;
     const esgDelta = lastH ? lastH.esg : 0;
+
+    // Find consequence text from current option
+    let consMsg = '';
+    if(csCurrentOpt && csCurrentOpt.cons) consMsg = csCurrentOpt.cons;
 
     invEl.textContent = '0';
     esgEl.textContent = '0';
@@ -3542,7 +3646,23 @@ function exportSummary(){
     rollNumber(invEl, invDelta, null, null);
     csTimeout(() => {
       rollNumber(esgEl, esgDelta, null, () => {
-        csTimeout(() => finishCutscene(), 800);
+        // Show cumulative totals
+        invTotalEl.textContent = 'TOTAL: ' + G.inv;
+        esgTotalEl.textContent = 'TOTAL: ' + G.esg;
+
+        // Show consequence explanation
+        csTimeout(() => {
+          if(csSkipped) return;
+          if(consMsg){
+            consText.textContent = consMsg;
+            consBox.classList.add('visible');
+          }
+          // Show CONTINUE button
+          csTimeout(() => {
+            if(csSkipped) return;
+            continueBtn.style.display = '';
+          }, consMsg ? 400 : 200);
+        }, 300);
       });
     }, 200);
   }
