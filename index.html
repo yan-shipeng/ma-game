@@ -19,9 +19,11 @@ body{
   font-size:24px;
   line-height:1.7;
   overflow-x:hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  /* VT323 is a pixel/bitmap font — disable antialiasing for crisp rendering */
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: optimizeSpeed;
+  font-smooth: never;
 }
 /* Keep Press Start 2P only for titles and key labels */
 .title-name,.title-sub,.gameover-title,.final-archetype-title,
@@ -300,7 +302,8 @@ body::after{
 }
 .hud-bar-group{
   flex:1;
-  min-width:120px;
+  min-width:0;
+  overflow:hidden;
 }
 .hud-bar-label{
   font-size:14px;
@@ -308,6 +311,9 @@ body::after{
   margin-bottom:2px;
   display:flex;
   justify-content:space-between;
+  align-items:center;
+  white-space:nowrap;
+  gap:4px;
 }
 .hud-bar-track{
   height:10px;
@@ -979,7 +985,8 @@ body::after{
 /* ============================================================= */
 
 /* --- [HIGH] Minimum font-size enforcement --- */
-.hud-bar-label{font-size:18px !important;}
+/* hud-bar-label: keep at 16px to prevent wrapping; white-space:nowrap enforced above */
+.hud-bar-label{font-size:16px !important;white-space:nowrap !important;}
 .hud-progress{font-size:16px !important;}
 .hud-bar-value{font-size:18px !important;color:#fff;}
 .tab-btn{font-size:16px !important;padding:10px 16px !important;flex:1;min-width:120px;}
