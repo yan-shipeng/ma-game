@@ -410,6 +410,8 @@ body::after{
 /* ============================================================= */
 /* CHAPTER IMAGE                                                  */
 /* ============================================================= */
+/* Never show image on outcome screen */
+#out-ch-img{display:none !important;}
 .chapter-scene{
   width:100%;
   max-height:300px;
@@ -1938,7 +1940,7 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 <!-- SCREEN: OUTCOME                                               -->
 <!-- ============================================================= -->
 <div class="screen" id="s-outcome">
-  <img id="out-ch-img" class="chapter-scene pixel-border" src="" alt="" style="display:none;margin-top:8px;"/>
+  <!-- out-ch-img removed: no image on outcome screen -->
   <div class="hud">
     <div class="hud-inner pixel-border">
       <div class="hud-bar-group">
