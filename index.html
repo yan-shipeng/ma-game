@@ -112,6 +112,14 @@ body{
   color:#5ce0d8;
   letter-spacing:2px;
 }
+.landing-desc{
+  font-size:18px;
+  color:#c8c4b0;
+  line-height:2;
+  max-width:520px;
+  text-align:center;
+  padding:0 16px;
+}
 .pixel-input{
   font-family:'Press Start 2P',monospace;
   font-size:12px;
@@ -1817,6 +1825,7 @@ body.theme-hok .title-name{
   font-family:'Noto Serif SC',serif;
 }
 body.theme-hok .title-subtitle{color:#a78bfa;}
+body.theme-hok .landing-desc{color:#c4b5fd;font-family:'Noto Serif SC',serif;}
 /* Char cards */
 body.theme-hok .char-card{
   background:linear-gradient(160deg,#0f0628,#1a0a3a);
@@ -1994,14 +2003,29 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 </div>
 
 <!-- ============================================================= -->
-<!-- SCREEN: TITLE (no access code — goes directly to char select) -->
+<!-- SCREEN: LANDING / TITLE                                       -->
 <!-- ============================================================= -->
-<div class="screen title-screen" id="s-password" style="display:none;"></div>
+<div class="screen title-screen active" id="s-password">
+  <div class="title-name">TITAN CHALLENGE</div>
+  <div class="title-subtitle">— RPG EDITION —</div>
+  <div class="landing-desc">
+    You are the new CEO of <strong>Titan Corporation</strong>, a global consumer goods company
+    that has been acquiring brands with strong environmental and social missions.
+    <br/><br/>
+    Over four chapters, you will face real-world ESG dilemmas faced by companies like
+    Ben &amp; Jerry's, Patagonia, and Unilever. Every decision shifts two scores:
+    <span style="color:#3b82f6;">Investor Confidence</span> and
+    <span style="color:#4ade80;">ESG Credibility</span>.
+    <br/><br/>
+    Let both scores reach zero—and the board will remove you.
+  </div>
+  <button class="pixel-btn" onclick="playClick();show('s-charselect')">PRESS START</button>
+</div>
 
 <!-- ============================================================= -->
 <!-- SCREEN: CHARACTER SELECT                                      -->
 <!-- ============================================================= -->
-<div class="screen char-select active" id="s-charselect">
+<div class="screen char-select" id="s-charselect">
   <div class="char-select-title">SELECT YOUR CEO</div>
   <div class="char-cards">
     <div class="char-card pixel-border" id="char-male" onclick="selectChar('male')">
