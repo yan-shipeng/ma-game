@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Titan Challenge — RPG Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet"/>
 <style>
 /* ============================================================= */
 /* RESET & BASE                                                   */
@@ -15,13 +15,19 @@ body{
   min-height:100vh;
   background:#0c0e1a;
   color:#e0dcc8;
-  font-family:'Press Start 2P',monospace;
-  font-size:12px;
-  line-height:1.9;
+  font-family:'VT323',monospace;
+  font-size:20px;
+  line-height:1.7;
   overflow-x:hidden;
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: unset;
   text-rendering: optimizeSpeed;
+}
+/* Keep Press Start 2P only for titles and key labels */
+.title-name,.title-sub,.gameover-title,.final-archetype-title,
+.outcome-title,.hud-progress,.decision-menu-title,
+.cs-executed,.cs-score-title{
+  font-family:'Press Start 2P',monospace;
 }
 
 /* Scanline overlay */
@@ -1929,6 +1935,7 @@ body.theme-hok #char-female img.char-portrait{ content:url('images/hok-female-ce
 <!-- SCREEN: OUTCOME                                               -->
 <!-- ============================================================= -->
 <div class="screen" id="s-outcome">
+  <img id="out-ch-img" class="chapter-scene pixel-border" src="" alt="" style="display:none;margin-top:8px;"/>
   <div class="hud">
     <div class="hud-inner pixel-border">
       <div class="hud-bar-group">
@@ -2911,7 +2918,11 @@ function _doAfterConsequence(){
     updateProgress();
     presentDecision();
   } else {
-    // Chapter complete — show outcome
+    // Chapter complete — clear decision screen then show outcome
+    const menu = document.getElementById('decision-menu');
+    menu.classList.remove('active');
+    menu.innerHTML = '';
+    document.getElementById('ch-img').style.display = 'none';
     playFanfare();
     renderOutcome();
     show('s-outcome');
@@ -2921,6 +2932,12 @@ function _doAfterConsequence(){
 function renderOutcome(){
   const ch = CHAPTERS[G.chIdx];
   updateHUD();
+  // Show chapter image on outcome screen
+  const outImg = document.getElementById('out-ch-img');
+  if(outImg){
+    outImg.src = (window.getChapterImg && ch.id) ? window.getChapterImg(ch.id) : ch.img;
+    outImg.style.display = 'block';
+  }
 
   // Score delta summary for this chapter
   const chHist = G.history.filter(h => h.chId === ch.id);
