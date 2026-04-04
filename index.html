@@ -871,11 +871,12 @@ body::after{
     flex-shrink:0;
   }
   .hud-progress{
-    font-size:13px !important;
+    font-size:16px !important;
     white-space:normal;
     text-align:center;
     width:100%;
     padding:0 4px;
+    line-height:1.4;
   }
   .hud-chapters{
     justify-content:center;
@@ -894,11 +895,20 @@ body::after{
     padding:10px 8px;
     z-index:100;
   }
-  /* --- Chapter image: reduce max height on mobile --- */
+  /* --- Chapter image: reduce max height on mobile, no extra gap --- */
   .chapter-scene{
-    max-height:200px;
+    max-height:180px;
     margin-top:4px;
-    margin-bottom:4px;
+    margin-bottom:0;
+  }
+  /* --- Decision screen: reduce gap between image and content --- */
+  #s-decision{
+    gap:0;
+    padding:8px 8px 0;
+  }
+  /* --- Reduce screen padding on mobile --- */
+  .screen{
+    padding:8px 8px;
   }
   /* --- Decision menu: reduce bottom padding (dialogue is fixed) --- */
   .decision-menu{
@@ -914,8 +924,9 @@ body::after{
   .dialogue-name{font-size:14px !important;}
   .dialogue-text{font-size:14px !important;line-height:1.7;}
   /* --- Options: readable font --- */
-  .opt-item{font-size:16px !important;line-height:1.7;padding:12px 10px !important;}
-  .opt-label{font-size:14px !important;}
+  .opt-item{font-size:18px !important;line-height:1.8;padding:14px 10px !important;}
+  .opt-label{font-size:16px !important;}
+  body.theme-hok .opt-item{font-size:18px !important;}
   /* --- Tabs: smaller on mobile --- */
   .tab-btn{font-size:12px !important;padding:8px 10px !important;min-width:0;}
   /* --- Decision context card --- */
