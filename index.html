@@ -16,9 +16,12 @@ body{
   background:#0c0e1a;
   color:#e0dcc8;
   font-family:'Press Start 2P',monospace;
-  font-size:11px;
-  line-height:1.8;
+  font-size:12px;
+  line-height:1.9;
   overflow-x:hidden;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  text-rendering: optimizeSpeed;
 }
 
 /* Scanline overlay */
@@ -31,9 +34,9 @@ body::after{
   background:repeating-linear-gradient(
     0deg,
     transparent,
-    transparent 2px,
-    rgba(0,0,0,0.08) 2px,
-    rgba(0,0,0,0.08) 4px
+    transparent 3px,
+    rgba(0,0,0,0.04) 3px,
+    rgba(0,0,0,0.04) 4px
   );
 }
 
@@ -332,13 +335,13 @@ body::after{
 /* ============================================================= */
 .dialogue-overlay{
   position:fixed;
-  top:0;left:0;right:0;bottom:0;
+  left:0;right:0;bottom:0;
   z-index:200;
-  padding:12px;
+  padding:0;
   display:none;
-  align-items:center;
+  align-items:flex-end;
   justify-content:center;
-  background:rgba(0,0,0,0.45);
+  background:none;
 }
 .dialogue-overlay.active{display:flex !important;}
 .dialogue-box{
@@ -403,12 +406,13 @@ body::after{
 /* ============================================================= */
 .chapter-scene{
   width:100%;
-  max-height:220px;
-  object-fit:cover;
-  object-position:center top;
+  max-height:320px;
+  object-fit:contain;
+  object-position:center center;
   image-rendering:auto;
   margin-top:auto;
   margin-bottom:16px;
+  background:#0c0e1a;
 }
 
 /* ============================================================= */
@@ -2952,9 +2956,11 @@ function renderOutcome(){
     <div class="outcome-title">QUESTIONS TO REFLECT ON</div>
     ${ch.outcome.reflections.map(r => `<div class="reflection-item">${r}</div>`).join('')}`;
 
-  let tbl = `<div class="outcome-title">YOUR CHOICES VS REALITY</div>
+  // Only show the first decision in the comparison table (2nd decision is shown in the cutscene)
+  const firstDecHist = chHist.slice(0, 1);
+  let tbl = `<div class="outcome-title">YOUR CHOICE VS REALITY</div>
     <table class="cmp-table"><thead><tr><th>Decision</th><th>You</th><th>The Firm</th><th>Match?</th></tr></thead><tbody>`;
-  chHist.forEach(h => {
+  firstDecHist.forEach(h => {
     const match = h.letter === h.real;
     tbl += `<tr><td>${h.decTitle}</td><td><strong style="color:#5ce0d8">${h.letter}</strong></td><td><strong style="color:#f0c040">${h.real}</strong></td><td class="${match?'tag-match':'tag-diff'}">${match?'YES':'NO'}</td></tr>`;
   });
