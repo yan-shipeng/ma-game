@@ -342,6 +342,7 @@ body::after{
 }
 .dialogue-overlay.active{display:flex !important;}
 .dialogue-box{
+  width:100%;
   max-width:860px;
   margin:0 auto;
   background:#111827;
@@ -3432,7 +3433,7 @@ function exportSummary(){
     const step = target >= 0 ? 1 : -1;
     const abs = Math.abs(target);
     const interval = abs > 0 ? Math.max(30, 600 / abs) : 0;
-    if(abs === 0){ el.textContent = '0'; if(done) done(); return; }
+    if(abs === 0){ el.textContent = (target >= 0 ? '+' : '') + target; if(done) csTimeout(done, 200); return; }
     function tick(){
       cur += step;
       el.textContent = (cur >= 0 ? '+' : '') + cur;
@@ -3610,28 +3611,29 @@ function exportSummary(){
     invEl.textContent = '0';
     esgEl.textContent = '0';
 
-    rollNumber(invEl, invDelta, null, null);
-    csTimeout(() => {
-      rollNumber(esgEl, esgDelta, null, () => {
-        // Show cumulative totals
-        invTotalEl.textContent = 'TOTAL: ' + G.inv;
-        esgTotalEl.textContent = 'TOTAL: ' + G.esg;
+    rollNumber(invEl, invDelta, null, () => {
+      csTimeout(() => {
+        rollNumber(esgEl, esgDelta, null, () => {
+          // Show cumulative totals
+          invTotalEl.textContent = 'TOTAL: ' + G.inv;
+          esgTotalEl.textContent = 'TOTAL: ' + G.esg;
 
-        // Show consequence explanation
-        csTimeout(() => {
-          if(csSkipped) return;
-          if(consMsg){
-            consText.textContent = consMsg;
-            consBox.classList.add('visible');
-          }
-          // Show CONTINUE button
+          // Show consequence explanation
           csTimeout(() => {
             if(csSkipped) return;
-            continueBtn.style.display = '';
-          }, consMsg ? 400 : 200);
-        }, 300);
-      });
-    }, 200);
+            if(consMsg){
+              consText.textContent = consMsg;
+              consBox.classList.add('visible');
+            }
+            // Show CONTINUE button
+            csTimeout(() => {
+              if(csSkipped) return;
+              continueBtn.style.display = '';
+            }, consMsg ? 400 : 200);
+          }, 300);
+        });
+      }, 200);
+    });
   }
 
   function finishCutscene(){
@@ -3641,6 +3643,9 @@ function exportSummary(){
     document.getElementById('cs-act1').style.display = 'flex';
     document.getElementById('cs-act2').classList.remove('active');
     document.getElementById('cs-act3').classList.remove('active');
+    // Ensure dialogue overlay is hidden so it doesn't block the next screen
+    const dlg = document.getElementById('dialogue-overlay');
+    if(dlg) dlg.classList.remove('active');
     if(csCallback) { const cb = csCallback; csCallback = null; cb(); }
   }
 
