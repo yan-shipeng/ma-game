@@ -845,6 +845,108 @@ body::after{
 .spacer-dialogue{height:160px;}
 
 /* ============================================================= */
+/* MOBILE RESPONSIVE FIXES (max-width: 480px)                    */
+/* ============================================================= */
+@media(max-width:480px){
+  /* --- HUD: stack vertically, prevent overflow --- */
+  .hud-inner{
+    flex-direction:column;
+    gap:6px;
+    padding:8px 10px;
+    overflow:hidden;
+  }
+  .hud-bar-group{
+    width:100%;
+    min-width:0;
+  }
+  .hud-bar-label{
+    font-size:14px !important;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .hud-bar-value{
+    font-size:14px !important;
+    margin-left:8px;
+    flex-shrink:0;
+  }
+  .hud-progress{
+    font-size:13px !important;
+    white-space:normal;
+    text-align:center;
+    width:100%;
+    padding:0 4px;
+  }
+  .hud-chapters{
+    justify-content:center;
+    margin-top:2px;
+  }
+  /* --- Theme toggle: move below HUD, not overlapping --- */
+  #theme-toggle-btn{
+    position:relative;
+    top:auto;
+    right:auto;
+    display:block;
+    width:calc(100% - 20px);
+    margin:6px 10px 0;
+    text-align:center;
+    font-size:10px !important;
+    padding:10px 8px;
+    z-index:100;
+  }
+  /* --- Chapter image: reduce max height on mobile --- */
+  .chapter-scene{
+    max-height:200px;
+    margin-top:4px;
+    margin-bottom:4px;
+  }
+  /* --- Decision menu: reduce bottom padding (dialogue is fixed) --- */
+  .decision-menu{
+    padding-bottom:140px;
+  }
+  /* --- Dialogue box: compact on mobile --- */
+  .dialogue-box{
+    padding:10px 10px;
+    min-height:auto;
+    gap:10px;
+  }
+  .dialogue-portrait{width:52px;height:52px;}
+  .dialogue-name{font-size:14px !important;}
+  .dialogue-text{font-size:14px !important;line-height:1.7;}
+  /* --- Options: readable font --- */
+  .opt-item{font-size:16px !important;line-height:1.7;padding:12px 10px !important;}
+  .opt-label{font-size:14px !important;}
+  /* --- Tabs: smaller on mobile --- */
+  .tab-btn{font-size:12px !important;padding:8px 10px !important;min-width:0;}
+  /* --- Decision context card --- */
+  .decision-context-card{font-size:16px !important;}
+  /* --- Decision title --- */
+  .decision-menu-title{font-size:20px !important;}
+  /* --- Intro screen: add top padding so theme button doesn't overlap --- */
+  #s-intro{
+    padding-top:60px !important;
+  }
+  /* --- Intro hero image: full width on mobile --- */
+  .title-logo{
+    max-width:100% !important;
+    width:100%;
+  }
+  /* --- Intro text: full width --- */
+  #intro-scores-hud, #s-intro > div{
+    max-width:100% !important;
+    width:100%;
+    box-sizing:border-box;
+    padding:0 8px;
+  }
+  /* --- Reduce spacer height on mobile --- */
+  .spacer-dialogue{height:120px;}
+  /* --- Outcome delta summary: stack on mobile --- */
+  .outcome-delta-summary > div{
+    flex-direction:column;
+  }
+}
+
+/* ============================================================= */
 /* COPYRIGHT FOOTER                                               */
 /* ============================================================= */
 .copyright-footer{
@@ -1527,6 +1629,7 @@ body.theme-hok .cs-executed{color:#f0c040;}
   top:12px;
   right:16px;
   z-index:10000;
+  max-width:calc(100vw - 32px);
   font-family:'Press Start 2P',monospace;
   font-size:8px;
   padding:8px 12px;
